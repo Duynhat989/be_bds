@@ -1,0 +1,39 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js --host"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.10.0",
+    "axios": "^1.6.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "chalk": "^2.4.2",
+    "cors": "^2.8.5",
+    "docx": "^9.0.2",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-validator": "^7.2.0",
+    "googleapis": "^123.0.0",
+    "inquirer": "^8.2.4",
+    "jimp": "^0.22.10",
+    "jsonwebtoken": "^9.0.1",
+    "lodash": "^4.17.21",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.6.3",
+    "node-fetch": "^2.6.7",
+    "nodemon": "^2.0.22",
+    "openai": "^4.51.0",
+    "pg": "^8.11.3",
+    "sequelize": "^6.34.0",
+    "socket.io": "^4.7.2",
+    "stream": "^0.0.2",
+    "tesseract.js": "^5.0.3"
+  }
+}
