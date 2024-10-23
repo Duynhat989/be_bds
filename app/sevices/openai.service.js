@@ -12,7 +12,7 @@ const uploadFile = async (openai, filePath) => {
 // Hàm để tạo vector store từ nhiều file đã tải lên
 const createVectorStore = async (openai, fileIds, handle) => {
   const vectorStore = await openai.beta.vectorStores.create({
-    name: `Assistant_${handle}`,
+    name: `Vector_${handle}`,
     file_ids: fileIds,
   });
   return vectorStore.id;

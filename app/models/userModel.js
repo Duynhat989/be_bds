@@ -2,12 +2,12 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/config");
 const ROLES = {
   ADMIN: 1,
-  TEACHER: 2,
-  STUDENT: 3,
+  DEV: 2,
+  CUSTOMER: 3,
 };
 // Định nghĩa model User
 const User = sequelize.define(
-  "User",
+  "Users",
   {
     name: {
       type: DataTypes.STRING,
@@ -29,14 +29,11 @@ const User = sequelize.define(
     role: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: ROLES.STUDENT, // Mặc định là Sinh viên (3)
+      defaultValue: ROLES.CUSTOMER, // Mặc định là Sinh viên (3)
       validate: {
-        isIn: [[ROLES.ADMIN, ROLES.TEACHER, ROLES.STUDENT]], // Chỉ cho phép 1 (Admin), 2 (Teacher), hoặc 3 (Student)
+        isIn: [[ROLES.ADMIN, ROLES.DEV, ROLES.CUSTOMER]], // Chỉ cho phép 1 (Admin), 2 (Dev), hoặc 3 (Customer)
       },
     },
-  },
-  {
-    tableName: "users",
   }
 );
 

@@ -8,7 +8,7 @@ const auth = (roles = []) => {
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
     if (!token) {
-      return res.status(401).json({ message: req.t('auth.notLoggedIn') });
+      return res.status(401).json({ message: "Not login" });
     }
 
     try {
@@ -17,12 +17,12 @@ const auth = (roles = []) => {
 
       if (roles.length && !roles.includes(req.user.role)) {
         // Vai trò không được phép
-        return res.status(403).json({ message: req.t('auth.forbidden') });
+        return res.status(403).json({ message: 'Not forbidden' });
       }
 
       next();
     } catch (err) {
-      return res.status(401).json({ message: req.t('auth.invalidToken') });
+      return res.status(401).json({ message: 'invalidToken' });
     }
   };
 };

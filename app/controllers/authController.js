@@ -4,12 +4,12 @@ const { createNewToken } = require('../middlewares/manageToken');
 // Đăng kí tạo tài khoản
 exports.register = async (req, res) => {
     const { name, email, phone, password } = req.body;
-    const role =  ROLES.TEACHER;
+    const role = 3;
     try {
         let user = await User.findOne({ where: { email } });
         if (user) return res.status(400).json({
             status: 0,
-            message: req.t('errors.emailUsed'),
+            message: "Email exits",
             data: null
         });
         // Mã hóa mật khẩu
@@ -24,7 +24,7 @@ exports.register = async (req, res) => {
         });
         res.status(201).json({
             status: 1,
-            message: req.t('success.created'),
+            message: "Register success",
             data: {
                 id: user.id,
                 name: user.name,
@@ -36,7 +36,7 @@ exports.register = async (req, res) => {
     } catch (err) {
         return res.status(500).json({
             status: 0,
-            message: req.t('errors.serverError'),
+            message: "Error services",
             data: null
         });
     }
@@ -47,15 +47,15 @@ exports.login = async (req, res) => {
     try {
         const user = await User.findOne({ where: { email } });
         if (!user) return res.status(400).json({
-            status: 0,
-            message: req.t('errors.emailOrPasswordIncorrect'),
+            success: false,
+            message: "Login failed",
             data: null
         });
 
         const isMatch = await compare(password, user.password);
         if (!isMatch) return res.status(400).json({
-            status: 0,
-            message: req.t('errors.emailOrPasswordIncorrect'),
+            success: false,
+            message: "Login failed",
             data: null
         });
 
@@ -63,8 +63,8 @@ exports.login = async (req, res) => {
         const token = createNewToken(payload);
 
         return res.json({
-            status: 1,
-            message: req.t('success.loginSuccess'),
+            success: true,
+            message: "Login success",
             data: {
                 name: user.name,
                 token: token,
@@ -73,8 +73,8 @@ exports.login = async (req, res) => {
         });
     } catch (err) {
         return res.status(500).json({
-            status: 0,
-            message: req.t('errors.serverError'),
+            success: false,
+            message: "Error services",
             data: null
         });
     }
@@ -91,7 +91,7 @@ exports.createUser = async (req, res) => {
             data: null
         });
 
-        if ((req.user.role ===  ROLES.TEACHER || req.user.role ===  ROLES.ADMIN) && ![ ROLES.TEACHER,  ROLES.STUDENT].includes(role)) {
+        if ((req.user.role === ROLES.TEACHER || req.user.role === ROLES.ADMIN) && ![ROLES.TEACHER, ROLES.STUDENT].includes(role)) {
             return res.status(403).json({
                 status: 0,
                 message: req.t('errors.forbidden'),

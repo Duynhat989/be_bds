@@ -4,18 +4,18 @@ const userController = require("../controllers/userController");
 const auth = require('../middlewares/authMiddleware.js');
 
 // Lấy danh sách tất cả học sinh
-router.get("/students", auth([1, 2]), userController.getAllStudents);
+router.get("/students", auth([1, 3]), userController.getAllStudents);
 
 // Lấy danh sách tất cả giáo viên
-router.get("/teachers", auth([1, 2]),userController.getAllTeachers);
+router.get("/teachers", auth([1, 3]),userController.getAllTeachers);
 
 // Tìm một học sinh hoặc giáo viên cụ thể
-router.get("/users/:id", auth([1, 2]), userController.findUserById);
+router.get("/users/:id", auth([1, 3]), userController.findUserById);
 
 // Cập nhật thông tin người dùng
-router.put('/users/:id', auth([1, 2]), userController.updateUser);
+router.put('/users/:id', auth([1, 3]), userController.updateUser);
 
 // Xóa người dùng
-router.delete('/users/:id', auth([1, 2]), userController.deleteUser);
+router.delete('/users/:id', auth([1, 3]), userController.deleteUser);
 
 module.exports = router;
