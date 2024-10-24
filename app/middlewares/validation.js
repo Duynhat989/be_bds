@@ -3,7 +3,6 @@ const { validationResult } = require('express-validator');
 // Hàm xử lý validate chung
 const validate = (validations) => {
     return async (req, res, next) => {
-        console.log('req.body')
         const missingFields = [];
         // Lặp qua từng tham số trong danh sách validations
         validations.forEach(field => {

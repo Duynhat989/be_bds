@@ -5,6 +5,11 @@ const { STATUS, Setup, loadApiKey, loadModel } = require('../models/setupModel')
 const { Files } = require('../models/fileModel');
 const { Vector } = require('../models/vectorModel');
 const { Assistant, astCreateRow, findAssistant, astUpdateRow } = require('../models/assistantModel');
+const { Conversation, astConversation, findConversation, updateConversation } = require('../models/conversationModel');
+const { Course } = require('../models/courseModel');
+const { Lesson } = require('../models/lessonModel');
+const { courseUser } = require('../models/courseUserModel');
+
 
 sequelize.sync({ force: false }).then(() => {
   console.log('Database đã được đồng bộ!');
@@ -14,13 +19,26 @@ module.exports = {
   User,
   ROLES,
   Setup,
+  // Tạo file dữ liệu
   Files,
   loadApiKey,
   loadModel,
   STATUS,
   Vector,
+  // Trợ lý
   Assistant,
   astCreateRow,
   findAssistant,
-  astUpdateRow
+  astUpdateRow,
+  // Cuộc hội thoại
+  Conversation,
+  astConversation,
+  findConversation,
+  updateConversation,
+  // Khóa học 
+  Course,
+  // Bài giảng 
+  Lesson,
+  // Người dùng đăng ký khóa học 
+  courseUser
 };

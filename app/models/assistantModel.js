@@ -49,6 +49,16 @@ const Assistant = sequelize.define(
       allowNull: true,
       defaultValue:"gpt-4o-mini"
     },
+    view: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue:0
+    },
+    love: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      defaultValue:"[]"
+    },
     status: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -74,6 +84,7 @@ const findAssistant = async (assistant_id) => {
   return assistant
 }
 const astUpdateRow = async (name, detail, image, instructions, vector_id, file_ids, assistant_id, content, suggests,id) => {
+  console.log('3434')
   var assistant = await Assistant.update({
     name, detail, image, instructions, vector_id, file_ids, assistant_id, content, suggests
   }, {

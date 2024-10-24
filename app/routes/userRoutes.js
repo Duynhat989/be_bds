@@ -2,20 +2,17 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
 const auth = require('../middlewares/authMiddleware.js');
+const { validate } = require("../middlewares/validation.js");
 
-// Lấy danh sách tất cả học sinh
-router.get("/students", auth([1, 3]), userController.getAllStudents);
 
-// Lấy danh sách tất cả giáo viên
-router.get("/teachers", auth([1, 3]),userController.getAllTeachers);
-
-// Tìm một học sinh hoặc giáo viên cụ thể
-router.get("/users/:id", auth([1, 3]), userController.findUserById);
-
-// Cập nhật thông tin người dùng
-router.put('/users/:id', auth([1, 3]), userController.updateUser);
-
+// Lấy danh sách người dùng
+router.get("/users", auth([1]), userController.users);
+// Tìm người dùng
+router.post("/user/find", auth([1]),validate(['id']), userController.find);
+// Cập nhật người dùng
+router.post("/user/update", auth([1]),validate(['id']), userController.update);
 // Xóa người dùng
-router.delete('/users/:id', auth([1, 3]), userController.deleteUser);
+router.delete("/user/delete", auth([1]),validate(['id']), userController.delete);
+
 
 module.exports = router;
