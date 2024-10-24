@@ -9,6 +9,7 @@ const { Conversation, astConversation, findConversation, updateConversation } = 
 const { Course } = require('../models/courseModel');
 const { Lesson } = require('../models/lessonModel');
 const { courseUser } = require('../models/courseUserModel');
+const { RealEstate } = require('../models/realestaleModel');
 
 
 sequelize.sync({ force: false }).then(() => {
@@ -40,5 +41,7 @@ module.exports = {
   // Bài giảng 
   Lesson,
   // Người dùng đăng ký khóa học 
-  courseUser
+  courseUser,
+  // Thông tin bất động sản
+  RealEstate
 };

@@ -47,17 +47,17 @@ const Assistant = sequelize.define(
     name_model: {
       type: DataTypes.STRING,
       allowNull: true,
-      defaultValue:"gpt-4o-mini"
+      defaultValue: "gpt-4o-mini"
     },
     view: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      defaultValue:0
+      defaultValue: 0
     },
     love: {
       type: DataTypes.TEXT,
       allowNull: true,
-      defaultValue:"[]"
+      defaultValue: "[]"
     },
     status: {
       type: DataTypes.INTEGER,
@@ -69,9 +69,16 @@ const Assistant = sequelize.define(
     },
   }
 );
-const astCreateRow = async (name, detail, image, instructions, vector_id, file_ids, assistant_id, content, suggests) => {
+const astCreateRow = async (name, detail, image, instructions, vector_id, file_ids, assistant_id, content, suggests, name_model) => {
   var assistant = await Assistant.create({
-    name, detail, image, instructions, vector_id, file_ids, assistant_id, content, suggests
+    name, detail, image, 
+    instructions, 
+    vector_id, 
+    file_ids, 
+    assistant_id, 
+    content, 
+    suggests, 
+    name_model: name_model || "gpt-4o-mini"
   });
   return assistant
 }
@@ -83,10 +90,10 @@ const findAssistant = async (assistant_id) => {
   })
   return assistant
 }
-const astUpdateRow = async (name, detail, image, instructions, vector_id, file_ids, assistant_id, content, suggests,id) => {
-  console.log('3434')
+const astUpdateRow = async (name, detail, image, instructions, vector_id, file_ids, assistant_id, content, suggests, name_model, id) => {
+  // console.log('3434')
   var assistant = await Assistant.update({
-    name, detail, image, instructions, vector_id, file_ids, assistant_id, content, suggests
+    name, detail, image, instructions, vector_id, file_ids, assistant_id, content, suggests, name_model: name_model || "gpt-4o-mini"
   }, {
     where: { id: id }
   });

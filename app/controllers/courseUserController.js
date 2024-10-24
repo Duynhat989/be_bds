@@ -1,4 +1,4 @@
-const { STATUS, courseUser,Course } = require("../models");
+const { STATUS, courseUser,Course,Lesson } = require("../models");
 const { encryption, compare } = require('../utils/encode');
 
 // Lấy danh sách tất cả học sinh
@@ -33,10 +33,34 @@ exports.mySevices = async (req, res) => {
             const item = lst[index];
             // console.log(item.course_id)
             const course = await Course.findByPk(item.course_id)
+            if(course){
+                const lesions = await Lesson.findAll({
+                    where:{
+                        course_id:course.id
+                    },
+                    attributes:["name","detail","image","indexRow","url_video"]
+                })
+                lstSevices.push({
+                    watched:item.watched,
+                    course:{
+                        ...course.dataValues,
+                        ...{
+                            lessons:lesions
+                        }
+                    }
+                })
+            }else{
+                
             lstSevices.push({
                 watched:item.watched,
-                course:course
+                course:{
+                    ...course.dataValues,
+                    ...{
+                        lessons:[]
+                    }
+                }
             })
+            }
         }
         res.status(200).json({
             success: true,

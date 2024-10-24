@@ -24,7 +24,7 @@ exports.getAllAssistant = async (req, res) => {
 };
 exports.createAssistant = async (req, res) => {
     try {
-        const { name, detail, image, instructions, file_ids, suggests } = req.body
+        const { name, detail, image, instructions, file_ids, suggests, name_model } = req.body
         // Tạo trợ lý 
         // console.log('sđá')
         let OPENAI_API_KEY = await loadApiKey()
@@ -50,7 +50,14 @@ exports.createAssistant = async (req, res) => {
         console.log(file_ids)
         // Mình cần lưu vào
         var resRow = await astCreateRow(
-            name, detail, image, instructions, vector_id, JSON.stringify(file_ids), assistant.id, JSON.stringify(assistant), JSON.stringify(suggests)
+            name, detail, image, 
+            instructions, 
+            vector_id, 
+            JSON.stringify(file_ids), 
+            assistant.id, 
+            JSON.stringify(assistant), 
+            JSON.stringify(suggests),
+            name_model
         )
         res.status(200).json({
             success: true,
@@ -62,7 +69,7 @@ exports.createAssistant = async (req, res) => {
 };
 exports.updateAssistant = async (req, res) => {
     try {
-        const { name, detail, image, instructions, file_ids, suggests, id } = req.body
+        const { name, detail, image, instructions, file_ids, suggests,name_model, id } = req.body
         // Lấy api key
         let OPENAI_API_KEY = await loadApiKey()
         if (OPENAI_API_KEY.length < 10) {
@@ -108,6 +115,7 @@ exports.updateAssistant = async (req, res) => {
                 assistant.id,
                 JSON.stringify(assistant),
                 JSON.stringify(suggests),
+                name_model,
                 assistant_old.id
             )
             // Danh sách trợ lý
@@ -125,6 +133,7 @@ exports.updateAssistant = async (req, res) => {
                 assistant_old.assistant_old,
                 assistant_old.assistant,
                 JSON.stringify(suggests),
+                name_model,
                 assistant_old.id
             )
             // Danh sách trợ lý
@@ -177,7 +186,6 @@ exports.find = async (req, res) => {
 exports.delete = async (req, res) => {
     try {
         const { id } = req.body;
-
         let OPENAI_API_KEY = await loadApiKey()
         if (OPENAI_API_KEY.length < 10) {
             res.status(500).json({
@@ -185,27 +193,23 @@ exports.delete = async (req, res) => {
             });
             return
         }
-
         var module = new Assistaint(OPENAI_API_KEY)
         // Tìm khóa học theo ID
         const assistant = await Assistant.findByPk(id);
         if (!assistant) {
             return res.status(404).json({ success: false, message: "Assistant not found" });
         }
-
-        console.log('del file_id')
+        // console.log('del file_id')
         const old_file_ids = JSON.parse(assistant.file_ids)
         for (let index = 0; index < old_file_ids.length; index++) {
             const element = old_file_ids[index];
-            await module.delFile(element)
+            try { await module.delFile(element) } catch (error) {  }
         }
         // Xóa vector cũ
-        console.log('del vector')
-        await module.delVector(assistant.vector_id)
-
+        // console.log('del vector')
+        try { await module.delVector(assistant.vector_id) } catch (error) { }
         // Xóa khóa học
         await assistant.destroy();
-
         res.status(200).json({
             success: true,
             message: "Assistant deleted successfully"
