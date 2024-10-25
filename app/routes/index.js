@@ -7,6 +7,8 @@ const fileRoutes = require('./fileRoutes');
 const conversationRoutes = require('./conversationRoutes');
 const courseRoutes = require('./courseRoutes');
 const lessonRoutes = require('./lessonRoutes');
+const packageRoutes = require('./packageRoutes');
+const licenseRoutes = require('./licenseRoutes');
 module.exports = {
   authRoutes,
   userRoutes,
@@ -16,5 +18,7 @@ module.exports = {
   fileRoutes,
   conversationRoutes,
   courseRoutes,
-  lessonRoutes
+  lessonRoutes,
+  packageRoutes,
+  licenseRoutes
 }

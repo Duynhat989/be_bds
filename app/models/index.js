@@ -10,6 +10,11 @@ const { Course } = require('../models/courseModel');
 const { Lesson } = require('../models/lessonModel');
 const { courseUser } = require('../models/courseUserModel');
 const { RealEstate } = require('../models/realestaleModel');
+const { Day,addDayCount } = require('../models/dayModel');
+const { License } = require('../models/licenseModel');
+const { Package } = require('../models/packModel');
+const { Pay } = require('../models/payModel');
+
 
 
 sequelize.sync({ force: false }).then(() => {
@@ -43,5 +48,14 @@ module.exports = {
   // Người dùng đăng ký khóa học 
   courseUser,
   // Thông tin bất động sản
-  RealEstate
+  RealEstate,
+  // Thông tin ngày
+  Day,
+  addDayCount,
+  // Bản quyền 
+  License,
+  // 
+  Package,
+  // Phàn thanh toán của bạn
+  Pay
 };

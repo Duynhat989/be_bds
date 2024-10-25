@@ -38,7 +38,7 @@ exports.mySevices = async (req, res) => {
                     where:{
                         course_id:course.id
                     },
-                    attributes:["name","detail","image","indexRow","url_video"]
+                    attributes:["id","name","detail","image","indexRow","url_video"]
                 })
                 lstSevices.push({
                     watched:item.watched,

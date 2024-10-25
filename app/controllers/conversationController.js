@@ -73,10 +73,10 @@ exports.createConversation = async (req, res) => {
         const sendMessage = async (data) => {
             // console.log(data)
             if (!data.completed) {
-                res.write(`data: ${JSON.stringify({
+                res.write(`${JSON.stringify({
                     success: true,
                     data
-                })}\n\n`);
+                })}\r\n`);
             } else {
                 // update tin nhắn 
                 let newMsg = JSON.parse(msg.messages) || []
@@ -89,10 +89,10 @@ exports.createConversation = async (req, res) => {
                     content: data.full
                 })
                 await updateConversation(JSON.stringify(newMsg), msg.id)
-                res.write(`data: ${JSON.stringify({
+                res.write(`${JSON.stringify({
                     success: true,
                     data
-                })}\n\n`);
+                })}\r\n`);
                 res.end();
             }
         }
