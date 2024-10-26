@@ -22,26 +22,27 @@ const Pay = sequelize.define(
             allowNull: false
         },
         extension_period: {
-            type: DataTypes.STRING,
+            type: DataTypes.INTEGER,
             allowNull: false,
-            defaultValue: ""
+            defaultValue: 1 //Số tháng muốn gia hạn
         },
         must_pay: {
             type: DataTypes.STRING,
             allowNull: false,
-            defaultValue: ""
+            defaultValue: "" //Số tiền cần thanh toán
         },
         invoice_code: {
             type: DataTypes.STRING,
             allowNull: false,
-            defaultValue: ""
+            defaultValue: "" //Mã số thanh toán
         },
         status_pay: {
             type: DataTypes.INTEGER,
             allowNull: false,
             defaultValue: PAY_STATUS.HOLD,
             validate: {
-                isIn: [[PAY_STATUS.HOLD, PAY_STATUS.PAID, PAY_STATUS.CANCELED]], // 1 đang chờ, 2 đã thanh toán, 3 hủy thanh toán
+                isIn: [[PAY_STATUS.HOLD, PAY_STATUS.PAID, PAY_STATUS.CANCELED]], 
+                // 1 đang chờ, 2 đã thanh toán, 3 hủy thanh toán
             },
         },
         status: {

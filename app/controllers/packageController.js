@@ -6,7 +6,7 @@ exports.getPackages = async (req, res) => {
             where: {
                 status: STATUS.ON
             },
-            attributes: ["id","name", "description", "price", "features"]
+            attributes: ["id","name", "description", "price", "features","ask"]
         });
         res.status(200).json({
             success: true,
@@ -17,13 +17,14 @@ exports.getPackages = async (req, res) => {
     }
 };
 exports.addPackage = async (req, res) => {
-    const { name, description, price, features } = req.body;
+    const { name, description, price, features, ask } = req.body;
 
     let newPackage = await Package.create({
         name,
         description,
         price,
         features,
+        ask,
         status: STATUS.ON
     });
 
@@ -39,16 +40,16 @@ exports.addPackage = async (req, res) => {
 };
 exports.updatePackage = async (req, res) => {
     try {
-        const { name, description, price, features,  status, id } = req.body;
+        const { name, description, price, features,ask, id } = req.body;
         let updatedPackage = await Package.update({
             name,
             description,
             price,
             features,
-            status
+            ask
         }, {
             where: { id: id },
-            attributes: ["name", "description", "price", "features"]
+            attributes: ["id","name", "description", "price", "features","ask"]
         }
         );
 

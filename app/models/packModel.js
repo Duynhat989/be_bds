@@ -22,6 +22,11 @@ const Package = sequelize.define(
             allowNull: false,
             defaultValue: 1
         },
+        ask: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 1
+        },
         features: {
             type: DataTypes.TEXT('long'),
             allowNull: false

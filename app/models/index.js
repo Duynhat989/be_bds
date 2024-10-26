@@ -10,7 +10,7 @@ const { Course } = require('../models/courseModel');
 const { Lesson } = require('../models/lessonModel');
 const { courseUser } = require('../models/courseUserModel');
 const { RealEstate } = require('../models/realestaleModel');
-const { Day,addDayCount } = require('../models/dayModel');
+const { Day,addDayCount,checkLimit } = require('../models/dayModel');
 const { License } = require('../models/licenseModel');
 const { Package } = require('../models/packModel');
 const { Pay } = require('../models/payModel');
@@ -52,6 +52,7 @@ module.exports = {
   // Thông tin ngày
   Day,
   addDayCount,
+  checkLimit,
   // Bản quyền 
   License,
   // 

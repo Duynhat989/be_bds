@@ -8,10 +8,6 @@ const STATUS = {
 const Day = sequelize.define(
     "Days",
     {
-        name: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
         user_id: {
             type: DataTypes.INTEGER,
             allowNull: false
@@ -24,7 +20,7 @@ const Day = sequelize.define(
         count: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            defaultValue: 1
+            defaultValue: 1 //Số lượng câu hỏi trong 1 ngày
         },
         status: {
             type: DataTypes.INTEGER,
@@ -64,4 +60,25 @@ const addDayCount = async (user_id) => {
         return null
     }
 };
-module.exports = { Day, addDayCount };
+const checkLimit = async (objectData) => {
+    // console.log(objectData);
+    try {
+        // Lấy ngày hiện tại
+        const currentDate = new Date(objectData.date);
+        const today = new Date();
+        // Kiểm tra nếu ngày trong object đã hết hạn
+        if (currentDate <= today) {
+            return false;
+        }
+        // Kiểm tra nếu count vượt quá ask
+        if (objectData.day.count >= objectData.pack.ask) {
+            return false;
+        }
+        // Nếu vẫn trong hạn và count chưa vượt quá ask
+        return true;
+    } catch (error) {
+        return false;
+    }
+};
+
+module.exports = { Day, addDayCount, checkLimit };
