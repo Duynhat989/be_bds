@@ -7,6 +7,10 @@ const { validate } = require("../middlewares/validation.js");
 
 // Lấy danh sách người dùng
 router.get("/users", auth([1]), userController.users);
+// 
+router.get("/user/me", auth([1,3]), userController.me);
+// 
+router.post("/user/edit", auth([1,3]), userController.edit);
 // Tìm người dùng
 router.post("/user/find", auth([1]),validate(['id']), userController.find);
 // Cập nhật người dùng
