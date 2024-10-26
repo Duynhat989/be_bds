@@ -6,7 +6,7 @@ exports.getPackages = async (req, res) => {
             where: {
                 status: STATUS.ON
             },
-            attributes: ["name", "description", "price", "features"]
+            attributes: ["id","name", "description", "price", "features"]
         });
         res.status(200).json({
             success: true,
