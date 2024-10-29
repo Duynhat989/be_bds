@@ -1,113 +1,161 @@
+const fs = require('fs');
+const path = require('path');
 const { STATUS, Contract } = require("../models");
 const { encryption, compare } = require('../utils/encode');
+const multer = require('multer');
 
-// Lấy danh sách tất cả học sinh
+// Định nghĩa đường dẫn lưu trữ file Word
+const STORE_PATH = path.join(__dirname, '../../stores');
+// Tạo thư mục lưu trữ nếu chưa tồn tại
+if (!fs.existsSync(STORE_PATH)) {
+    fs.mkdirSync(STORE_PATH);
+}
+// Cấu hình multer để lưu file vào thư mục stores
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, STORE_PATH);
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname);
+    }
+});
+const upload = multer({ storage: storage });
+
+
+// Lấy danh sách tất cả hợp đồng
 exports.contracts = async (req, res) => {
     try {
         let contracts = await Contract.findAll({
-            where:{
-                status:1
+            where: {
+                status: 1
             }
-        })
+        });
         res.status(200).json({
             success: true,
-            contracts:contracts
+            contracts: contracts
         });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
 };
-exports.find = async (req, res) => {
-    try {
-        const { id } = req.body
-        const user_id = req.user.id
+
+
+// Tạo hợp đồng mới và tải lên file Word vào stores
+exports.create = async (req, res) => {
+    upload.single('template_contract')(req, res, async (err) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: "File upload failed" });
+        }
+        const { name, description, image, input } = req.body;
+        // Kiểm tra xem description có được cung cấp không
+        if (!description) {
+            return res.status(400).json({ success: false, message: "Description is required." });
+        }
+
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: "Template contract file is required." });
+        }
+        const newContract = await Contract.create({
+            name,
+            description:description,  // Đảm bảo không null
+            image,
+            template_contract: req.file.path,
+            input,
+            status: STATUS.ON
+        });
+        res.status(200).json({
+            success: true,
+            message: "Contract created successfully",
+            data: newContract
+        });
+        try {
+            
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message });
+        }
+    });
+};
+
+exports.update = async (req, res) => {
+    upload.single('template_contract')(req, res, async (err) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: "File upload failed" });
+        }
+        const { id, name, description, image, input } = req.body;
+
+        if (!id) {
+            return res.status(400).json({ success: false, message: "Contract ID is required." });
+        }
+
         const contract = await Contract.findByPk(id);
         if (!contract) {
-            return res.status(404).json({ success: false, message: "contract not found" });
+            return res.status(404).json({ success: false, message: "Contract not found" });
         }
-        // để lấy danh sách video bài giảng
-        let lstLesson = [];
-        let promese = {
-            contract_id:contract.id
+
+        try {
+            contract.name = name || contract.name;
+            contract.description = description || contract.description;
+            contract.image = image || contract.image;
+            contract.input = input || contract.input;
+            
+            if (req.file) {
+                contract.template_contract = req.file.path;
+            }
+
+            await contract.save();
+
+            res.status(200).json({
+                success: true,
+                message: "Contract updated successfully",
+                data: contract
+            });
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message });
         }
-        if(req.user.role != 1){
-            promese.user_id = user_id
+    });
+};
+exports.findByName = async (req, res) => {
+    try {
+        const { name } = req.query;
+
+        if (!name) {
+            return res.status(400).json({ success: false, message: "Contract name is required." });
         }
-        let contractU = await contractUser.findOne({
-            where:promese
-        })
-        // console.log(contractU)
-        if(contractU){
-            lstLesson = await Lesson.findAll({
-                where:{
-                    contract_id:contract.id
-                },
-                attributes:["id","name","detail","image","indexRow","url_video"]
-            })
-        }
-        res.status(200).json({
-            success: true,
-            message: `Update success.`,
-            data: {
-                id: contract.id,
-                name: contract.name,
-                detail: contract.detail,
-                image: contract.image,
-                price: contract.price,
-                sign_in: contract.sign_in,
-                lessons:lstLesson
+
+        const contracts = await Contract.findAll({
+            where: {
+                name: {
+                    [Op.like]: `%${name}%`
+                }
             }
         });
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
-};
-exports.create = async (req, res) => {
-    try {
-        const { name, detail, image, price, sign_in } = req.body;
-
-        // Tạo khóa học mới
-        const newcontract = await contract.create({
-            name,
-            detail,
-            image,
-            price,
-            sign_in,
-            status: STATUS.ON // Giả định rằng bạn có hằng số STATUS.ACTIVE là 1
-        });
 
         res.status(200).json({
             success: true,
-            message: "contract created successfully",
-            data: newcontract
+            data: contracts
         });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
 };
 
-exports.edit = async (req, res) => {
-    try {
-        const { id, name, detail, image, price,sign_in } = req.body;
 
-        // Tìm khóa học theo ID
-        const contract = await contract.findByPk(id);
-        if (!contract) {
-            return res.status(404).json({ success: false, message: "contract not found" });
+exports.findById = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!id) {
+            return res.status(400).json({ success: false, message: "Contract ID is required." });
         }
-        // Cập nhật thông tin khóa học
-        contract.name = name || contract.name;
-        contract.detail = detail || contract.detail;
-        contract.image = image || contract.image;
-        contract.price = price || contract.price;
-        contract.sign_in = sign_in || contract.sign_in;
 
-        // Lưu thay đổi
-        await contract.save();
+        const contract = await Contract.findByPk(id);
+
+        if (!contract) {
+            return res.status(404).json({ success: false, message: "Contract not found" });
+        }
 
         res.status(200).json({
             success: true,
-            message: "contract updated successfully",
             data: contract
         });
     } catch (error) {
@@ -118,17 +166,32 @@ exports.edit = async (req, res) => {
 exports.delete = async (req, res) => {
     try {
         const { id } = req.body;
-        // Tìm khóa học theo ID
-        const contract = await contract.findByPk(id);
-        if (!contract) {
-            return res.status(404).json({ success: false, message: "contract not found" });
+
+        if (!id) {
+            return res.status(400).json({ success: false, message: "Contract ID is required." });
         }
-        // Xóa khóa học
+
+        const contract = await Contract.findByPk(id);
+        if (!contract) {
+            return res.status(404).json({ success: false, message: "Contract not found" });
+        }
+
+        // Kiểm tra và xóa file docx nếu tồn tại
+        const filePath = contract.template_contract;
+        if (filePath) {
+            fs.unlink(path.resolve(filePath), (err) => {
+                if (err) {
+                    console.error("Error deleting file:", err.message);
+                }
+            });
+        }
+
+        // Xóa hợp đồng
         await contract.destroy();
 
         res.status(200).json({
             success: true,
-            message: "contract deleted successfully"
+            message: "Contract and associated file deleted successfully"
         });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });

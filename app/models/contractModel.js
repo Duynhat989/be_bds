@@ -12,7 +12,7 @@ const Contract = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    discription: {
+    description: {
       type: DataTypes.TEXT,
       allowNull: false,
     },

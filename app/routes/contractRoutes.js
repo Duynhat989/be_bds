@@ -6,12 +6,14 @@ const auth = require('../middlewares/authMiddleware.js');
 
 // Xem tất cả khóa học
 router.get("/contracts", auth([1, 3]), contractController.contracts);
-// Tìm khóa học 
-router.post("/contract/find", auth([1,3]),validate(['id']), contractController.find);
+// Tìm theo ID
+router.post("/contract/find", auth([1,3]),validate(['id']), contractController.findById);
+// Tìm theo tên
+router.post("/contract/findName", auth([1,3]),validate(['name']), contractController.findByName);
 // Tạo trợ lý
-router.post("/contract/create", auth([1]),validate(['name']), contractController.create);
+router.post("/contract/create", auth([1]), contractController.create);
 // Cập nhật trợ lý
-router.post("/contract/update", auth([1]),validate(['id']), contractController.edit);
+router.post("/contract/update", auth([1]), contractController.update);
 // Xóa khóa học
 router.delete("/contract/delete", auth([1]),validate(['id']), contractController.delete);
 // Tìm khóa học 
