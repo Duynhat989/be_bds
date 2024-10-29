@@ -28,7 +28,7 @@ exports.mySevices = async (req, res) => {
             where: {
                 user_id: user_id
             },
-            attributes: ["course_id", "watched", "status"]
+            attributes: ["id","course_id", "watched", "status"]
         })
         let lstSevices = []
         for (let index = 0; index < lst.length; index++) {
