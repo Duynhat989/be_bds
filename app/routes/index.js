@@ -10,6 +10,7 @@ const lessonRoutes = require('./lessonRoutes');
 const packageRoutes = require('./packageRoutes');
 const licenseRoutes = require('./licenseRoutes');
 const navRoutes = require('./navRoutes');
+const contractRoutes = require('./contractRoutes');
 module.exports = {
   authRoutes,
   userRoutes,
@@ -22,5 +23,6 @@ module.exports = {
   lessonRoutes,
   packageRoutes,
   licenseRoutes,
-  navRoutes
+  navRoutes,
+  contractRoutes
 }

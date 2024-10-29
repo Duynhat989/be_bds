@@ -45,8 +45,3 @@ class FileLocal {
 module.exports = {
     FileLocal
 }
-// Sử dụng class
-// const fileHandler = new FileLocal('someKey');
-// const base64ImageData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...'; // Base64 image data
-// const fileName = 'myImage'; // Tên file
-// fileHandler.saveBase64Image(base64ImageData, fileName);
