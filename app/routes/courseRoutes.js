@@ -18,4 +18,7 @@ router.delete("/course/delete", auth([1]),validate(['id']), courseController.del
 // Tìm khóa học 
 router.get("/course/me", auth([1,3]), courseUserController.mySevices);
 
+
+// Đăng ký khóa học
+router.post("/course/signin", auth([1,3]),validate(['course_id']), courseUserController.create);
 module.exports = router;

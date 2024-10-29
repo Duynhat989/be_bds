@@ -67,7 +67,7 @@ const checkLimit = async (objectData) => {
         const currentDate = new Date(objectData.date);
         const today = new Date();
         // Kiểm tra nếu ngày trong object đã hết hạn
-        if (currentDate <= today) {
+        if (currentDate < today) {
             return false;
         }
         // Kiểm tra nếu count vượt quá ask

@@ -41,6 +41,7 @@ exports.addPackage = async (req, res) => {
 exports.updatePackage = async (req, res) => {
     try {
         const { name, description, price, features,ask, id } = req.body;
+        // Thêm dữ liệu mới
         let updatedPackage = await Package.update({
             name,
             description,

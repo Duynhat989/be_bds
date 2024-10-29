@@ -14,6 +14,7 @@ const { Day,addDayCount,checkLimit } = require('../models/dayModel');
 const { License } = require('../models/licenseModel');
 const { Package } = require('../models/packModel');
 const { Pay } = require('../models/payModel');
+const { Contract } = require('../models/contractModel');
 
 
 
@@ -58,5 +59,6 @@ module.exports = {
   // 
   Package,
   // Phàn thanh toán của bạn
-  Pay
+  Pay,
+  Contract
 };

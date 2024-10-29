@@ -10,4 +10,6 @@ router.get("/setup", auth([1]), setupController.getAllSetup);
 router.get("/setup/save", auth([1, 3]),setupController.getAllSetup);
 
 
+router.get("/setup/status", setupController.getStatus);
+
 module.exports = router;

@@ -1,6 +1,7 @@
 const { STATUS, Conversation, astConversation, findConversation, updateConversation, loadApiKey, findAssistant, addDayCount, checkLimit } = require("../models");
 const { encryption, compare } = require('../utils/encode');
 const { Assistaint } = require('../modules/assistaint.module')
+const { Gpt } = require('../modules/gpt.module')
 
 const { License,Day,Package } = require('../models')
 
@@ -115,6 +116,37 @@ exports.createConversation = async (req, res) => {
 exports.conversation = async (req, res) => {
     try {
         const { thread_id } = req.body
+        // Danh sách cuộc hội thoại này
+        var list = await findConversation(req.user.id, `thread_${thread_id}`)
+        if (list) {
+            res.status(200).json({
+                success: true,
+                message: `conversation`,
+                data: {
+                    id: list.id,
+                    name: list.name,
+                    messages: JSON.parse(list.messages) || [],
+                    status: list.status
+                }
+            });
+        } else {
+            res.status(500).json({
+                success: false,
+                message: `Not found messages`,
+                data: ''
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+exports.chat = async (req, res) => {
+    try {
+        const { thread_id } = req.body
+
+
+
+        
         // Danh sách cuộc hội thoại này
         var list = await findConversation(req.user.id, `thread_${thread_id}`)
         if (list) {
