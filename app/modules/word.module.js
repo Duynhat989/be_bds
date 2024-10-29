@@ -49,11 +49,11 @@ module.exports = {
 };
 
 // Ví dụ sử dụng
-const processor = new WordProcessor();
-processor.replaceAndDownload('./template.docx', 'Duy', 'output')
-    .then((filePath) => {
-        console.log(`File đã được lưu tại: ${filePath}`);
-    })
-    .catch((err) => {
-        console.error(err);
-    });
+// const processor = new WordProcessor();
+// processor.replaceAndDownload('./template.docx', 'Duy', 'output')
+//     .then((filePath) => {
+//         console.log(`File đã được lưu tại: ${filePath}`);
+//     })
+//     .catch((err) => {
+//         console.error(err);
+//     });
