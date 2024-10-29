@@ -1,3 +1,4 @@
+const e = require("express");
 const { STATUS, Course,Lesson,courseUser } = require("../models");
 const { encryption, compare } = require('../utils/encode');
 
@@ -21,43 +22,69 @@ exports.find = async (req, res) => {
     try {
         const { id } = req.body
         const user_id = req.user.id
+        console.log(req.user)
         const course = await Course.findByPk(id);
         if (!course) {
             return res.status(404).json({ success: false, message: "course not found" });
         }
         // để lấy danh sách video bài giảng
         let lstLesson = [];
+
         let promese = {
             course_id:course.id
         }
-        if(req.user.role != 1){
+
+        if(req.user.role == 3){
             promese.user_id = user_id
-        }
-        let courseU = await courseUser.findOne({
-            where:promese
-        })
-        // console.log(courseU)
-        if(courseU){
-            lstLesson = await Lesson.findAll({
-                where:{
-                    course_id:course.id
-                },
-                attributes:["id","name","detail","image","indexRow","url_video"]
+            let courseU = await courseUser.findOne({
+                where:promese
             })
-        }
-        res.status(200).json({
-            success: true,
-            message: `Update success.`,
-            data: {
-                id: course.id,
-                name: course.name,
-                detail: course.detail,
-                image: course.image,
-                price: course.price,
-                sign_in: course.sign_in,
-                lessons:lstLesson
+            console.log(courseU)
+            if(courseU){
+                lstLesson = await Lesson.findAll({
+                    where:{
+                        course_id:course.id
+                    },
+                    attributes:["id","name","detail","image","indexRow","url_video"]
+                })
             }
-        });
+            res.status(200).json({
+                success: true,
+                message: `Update success.`,
+                data: {
+                    id: course.id,
+                    name: course.name,
+                    detail: course.detail,
+                    image: course.image,
+                    price: course.price,
+                    sign_in: course.sign_in,
+                    lessons:lstLesson
+                }
+            });
+        }else{
+            if(course){
+                lstLesson = await Lesson.findAll({
+                    where:{
+                        course_id:course.id
+                    },
+                    attributes:["id","name","detail","image","indexRow","url_video"]
+                })
+            }
+            res.status(200).json({
+                success: true,
+                message: `Update success.`,
+                data: {
+                    id: course.id,
+                    name: course.name,
+                    detail: course.detail,
+                    image: course.image,
+                    price: course.price,
+                    sign_in: course.sign_in,
+                    lessons:lstLesson
+                }
+            });
+        }
+        
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
