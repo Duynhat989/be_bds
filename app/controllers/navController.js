@@ -7,12 +7,20 @@ exports.estateAnalysis = async (req, res) => {
         const setups = await Setup.findOne({ 
             where: { 
                 status: STATUS.ON, 
-                name:'API_STATUS'
+                name:'API_ESTATE'
             }
         });
-        res.status(200).json({
-            maintenance: parseInt(setups.value) != 0 ? true : false
-        });
+        if(setups){
+            res.status(200).json({
+                success:false,
+                assistant_id: setups.value
+            });
+        }else{
+            res.status(500).json({
+                success:false,
+                message:"NOT_FOUND"
+            });
+        }
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -22,12 +30,20 @@ exports.financialAnalysis = async (req, res) => {
         const setups = await Setup.findOne({ 
             where: { 
                 status: STATUS.ON, 
-                name:'API_STATUS'
+                name:'API_FINANCEAL'
             }
         });
-        res.status(200).json({
-            maintenance: parseInt(setups.value) != 0 ? true : false
-        });
+        if(setups){
+            res.status(200).json({
+                success:false,
+                assistant_id: setups.value
+            });
+        }else{
+            res.status(500).json({
+                success:false,
+                message:"NOT_FOUND"
+            });
+        }
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -37,12 +53,20 @@ exports.newsSummary = async (req, res) => {
         const setups = await Setup.findOne({ 
             where: { 
                 status: STATUS.ON, 
-                name:'API_STATUS'
+                name:'API_SUMMARY'
             }
         });
-        res.status(200).json({
-            maintenance: parseInt(setups.value) != 0 ? true : false
-        });
+        if(setups){
+            res.status(200).json({
+                success:false,
+                assistant_id: setups.value
+            });
+        }else{
+            res.status(500).json({
+                success:false,
+                message:"NOT_FOUND"
+            });
+        }
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -52,12 +76,20 @@ exports.teamTraining = async (req, res) => {
         const setups = await Setup.findOne({ 
             where: { 
                 status: STATUS.ON, 
-                name:'API_STATUS'
+                name:'API_TEAMTRAINING'
             }
         });
-        res.status(200).json({
-            maintenance: parseInt(setups.value) != 0 ? true : false
-        });
+        if(setups){
+            res.status(200).json({
+                success:false,
+                assistant_id: setups.value
+            });
+        }else{
+            res.status(500).json({
+                success:false,
+                message:"NOT_FOUND"
+            });
+        }
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
