@@ -51,18 +51,7 @@ exports.mySevices = async (req, res) => {
                         }
                     }
                 })
-            } else {
-
-                lstSevices.push({
-                    watched: item.watched,
-                    course: {
-                        ...course.dataValues,
-                        ...{
-                            lessons: []
-                        }
-                    }
-                })
-            }
+            } 
         }
         res.status(200).json({
             success: true,
