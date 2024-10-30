@@ -9,6 +9,8 @@ router.post("/conversation/thread", auth([1, 3]), conversationController.createT
 // Tạo luồng chat stream
 router.post("/conversation/stream", auth([1, 3]),validate(['thread_id','message']), conversationController.createConversation);
 // Lấy danh sách tin nhắn
-router.post("/conversation", auth([1, 3]),validate(['thread_id']), conversationController.conversation);
+router.post("/conversation", auth([1, 3]),validate(['thread_id']), conversationController.conversationThread);
+// Lịch sử chat thread
+router.post("/historys", auth([1, 3]),validate(['assistant_id']), conversationController.chatHistory);
 
 module.exports = router;

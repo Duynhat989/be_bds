@@ -1,18 +1,21 @@
 const e = require("express");
-const { STATUS, Course,Lesson,courseUser } = require("../models");
+const { STATUS, Course, Lesson, courseUser } = require("../models");
 const { encryption, compare } = require('../utils/encode');
 
 // Lấy danh sách tất cả học sinh
 exports.courses = async (req, res) => {
     try {
+        const { page = 0, limit = 10 } = req.query;
         let courses = await Course.findAll({
-            where:{
-                status:1
-            }
+            where: {
+                status: 1
+            },
+            limit: parseInt(limit),
+            offset: parseInt(page) * parseInt(limit)
         })
         res.status(200).json({
             success: true,
-            courses:courses
+            courses: courses
         });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -31,21 +34,21 @@ exports.find = async (req, res) => {
         let lstLesson = [];
 
         let promese = {
-            course_id:course.id
+            course_id: course.id
         }
 
-        if(req.user.role == 3){
+        if (req.user.role == 3) {
             promese.user_id = user_id
             let courseU = await courseUser.findOne({
-                where:promese
+                where: promese
             })
             console.log(courseU)
-            if(courseU){
+            if (courseU) {
                 lstLesson = await Lesson.findAll({
-                    where:{
-                        course_id:course.id
+                    where: {
+                        course_id: course.id
                     },
-                    attributes:["id","name","detail","image","indexRow","url_video"]
+                    attributes: ["id", "name", "detail", "image", "indexRow", "url_video"]
                 })
             }
             res.status(200).json({
@@ -58,16 +61,16 @@ exports.find = async (req, res) => {
                     image: course.image,
                     price: course.price,
                     sign_in: course.sign_in,
-                    lessons:lstLesson
+                    lessons: lstLesson
                 }
             });
-        }else{
-            if(course){
+        } else {
+            if (course) {
                 lstLesson = await Lesson.findAll({
-                    where:{
-                        course_id:course.id
+                    where: {
+                        course_id: course.id
                     },
-                    attributes:["id","name","detail","image","indexRow","url_video"]
+                    attributes: ["id", "name", "detail", "image", "indexRow", "url_video"]
                 })
             }
             res.status(200).json({
@@ -80,11 +83,11 @@ exports.find = async (req, res) => {
                     image: course.image,
                     price: course.price,
                     sign_in: course.sign_in,
-                    lessons:lstLesson
+                    lessons: lstLesson
                 }
             });
         }
-        
+
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -115,7 +118,7 @@ exports.create = async (req, res) => {
 
 exports.edit = async (req, res) => {
     try {
-        const { id, name, detail, image, price,sign_in } = req.body;
+        const { id, name, detail, image, price, sign_in } = req.body;
 
         // Tìm khóa học theo ID
         const course = await Course.findByPk(id);

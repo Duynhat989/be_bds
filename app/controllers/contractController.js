@@ -28,11 +28,14 @@ const upload = multer({ storage: storage });
 // Lấy danh sách tất cả hợp đồng
 exports.contracts = async (req, res) => {
     try {
+        const { page = 0, limit = 10 } = req.query;
         let contracts = await Contract.findAll({
             where: {
                 status: 1
             },
-            attributes:["id","name","description","image","input","status"]
+            attributes:["id","name","description","image","input","status"],
+            limit: parseInt(limit), 
+            offset: parseInt(page) * parseInt(limit) 
         });
         res.status(200).json({
             success: true,

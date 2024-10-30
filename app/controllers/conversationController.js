@@ -1,9 +1,19 @@
-const { STATUS, Conversation, astConversation, findConversation, updateConversation, loadApiKey, findAssistant, addDayCount, checkLimit } = require("../models");
+const { 
+    STATUS,
+    astConversation,
+    findConversation,
+    updateConversation,
+    loadApiKey,
+    findAssistant,
+    addDayCount,
+    checkLimit,
+    Conversation,
+    License, Day, Package
+} = require("../models");
 const { encryption, compare } = require('../utils/encode');
 const { Assistaint } = require('../modules/assistaint.module')
 const { Gpt } = require('../modules/gpt.module')
 
-const { License,Day,Package } = require('../models')
 
 // Lấy danh sách tất cả học sinh
 exports.createThread = async (req, res) => {
@@ -53,15 +63,15 @@ exports.createConversation = async (req, res) => {
         const { thread_id, message } = req.body
         const user_id = req.user.id
         // Cộng thêm request vào ngày 
-        if(await checkLimit(await getLicense(user_id))){
+        if (await checkLimit(await getLicense(user_id))) {
             addDayCount(user_id)
-        }else{
+        } else {
             res.status(500).json({ success: false, message: 'License expired, please upgrade' });
             return
         }
         // Auto send stream
         let msg = await findConversation(req.user.id, `thread_${thread_id}`)
-        
+
         let assistant = await findAssistant(msg.assistant_id)
         if (!assistant) {
             res.status(500).json({ success: false, message: 'Not found assistant' });
@@ -119,7 +129,7 @@ exports.createConversation = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
-exports.conversation = async (req, res) => {
+exports.conversationThread = async (req, res) => {
     try {
         const { thread_id } = req.body
         // Danh sách cuộc hội thoại này
@@ -149,10 +159,6 @@ exports.conversation = async (req, res) => {
 exports.chat = async (req, res) => {
     try {
         const { thread_id } = req.body
-
-
-
-        
         // Danh sách cuộc hội thoại này
         var list = await findConversation(req.user.id, `thread_${thread_id}`)
         if (list) {
@@ -241,3 +247,42 @@ const getLicense = async (user_id) => {
     }
     return result
 }
+
+// Lịch sử chat theo user
+exports.chatHistory = async (req, res) => {
+    try {
+        const { page = 0, limit = 10 } = req.query;
+        const { assistant_id } = req.body
+        const user_id = req.user.id
+        let lst = await Conversation.findAll({
+            where:{
+                user_id:user_id,
+                assistant_id:assistant_id
+            },
+            attributes:["id","thread_id","messages"],
+            limit: parseInt(limit), 
+            offset: parseInt(page) * parseInt(limit) 
+        })
+        let dataLst = []
+        for (let index = 0; index < lst.length; index++) {
+            const element = lst[index];
+            let data = JSON.parse(element.messages)
+            if(data.length > 0){
+                let text = data[0].content
+                dataLst.push({
+                    id:element.id,
+                    thread_idid:element.thread_id,
+                    name:text.length > 50 ? text.slice(0,50) : text = text
+                })
+            }
+        }
+        // Danh sách cuộc hội thoại này
+        res.status(200).json({
+            success: true,
+            message: `Lịch sử trò chuyện`,
+            data: dataLst
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
