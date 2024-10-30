@@ -61,6 +61,12 @@ exports.createConversation = async (req, res) => {
         }
         // Auto send stream
         let msg = await findConversation(req.user.id, `thread_${thread_id}`)
+        
+        let assistant = await findAssistant(msg.assistant_id)
+        if (!assistant) {
+            res.status(500).json({ success: false, message: 'Not found assistant' });
+            return
+        }
         if (!msg) {
             res.status(500).json({ success: false, message: 'Not found messages' });
             return
@@ -108,7 +114,7 @@ exports.createConversation = async (req, res) => {
                 res.end();
             }
         }
-        module.chat(msg.assistant_id, `thread_${thread_id}`, sendMessage)
+        module.chat(assistant.assistant_id, `thread_${thread_id}`, sendMessage)
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
