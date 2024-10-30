@@ -2,8 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const { STATUS, Contract } = require("../models");
 const { encryption, compare } = require('../utils/encode');
-const { Sequelize, Op } = require('sequelize');
-
 const multer = require('multer');
 
 // Định nghĩa đường dẫn lưu trữ file Word
@@ -118,7 +116,7 @@ exports.update = async (req, res) => {
 };
 exports.findByName = async (req, res) => {
     try {
-        const { name } = req.body;
+        const { name } = req.query;
 
         if (!name) {
             return res.status(400).json({ success: false, message: "Contract name is required." });
@@ -144,7 +142,7 @@ exports.findByName = async (req, res) => {
 
 exports.findById = async (req, res) => {
     try {
-        const { id } = req.body;
+        const { id } = req.params;
 
         if (!id) {
             return res.status(400).json({ success: false, message: "Contract ID is required." });
