@@ -15,6 +15,8 @@ const { License } = require('../models/licenseModel');
 const { Package } = require('../models/packModel');
 const { Pay } = require('../models/payModel');
 const { Contract } = require('../models/contractModel');
+const { Prompt } = require('../models/promptModel');
+
 
 
 
@@ -60,5 +62,7 @@ module.exports = {
   Package,
   // Phàn thanh toán của bạn
   Pay,
-  Contract
+  Contract,
+
+  Prompt
 };

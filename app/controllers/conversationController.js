@@ -8,7 +8,7 @@ const { License,Day,Package } = require('../models')
 // Lấy danh sách tất cả học sinh
 exports.createThread = async (req, res) => {
     try {
-        const { assistant_id } = req.body
+        const { c } = req.body
         // Lấy thông tin trợ lý
         let assistant = await findAssistant(assistant_id)
         if (!assistant) {
@@ -32,7 +32,7 @@ exports.createThread = async (req, res) => {
             "Tư vấn",
             req.user.id,
             thread.id,
-            assistant.assistant_id,
+            assistant_id,
             "[]"
         )
         console.log(thread)

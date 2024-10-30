@@ -20,7 +20,9 @@ router.delete("/contract/delete", auth([1]),validate(['id']), contractController
 
 
 // Rà soát hợp đồng 
+router.post("/contract/process", auth([1,3]),validate(['id']), contractController.process);
 
-
+// Xuất hợp đồng theo keyword
+router.post("/contract/render", auth([1,3]),validate(['id']), contractController.render);
 
 module.exports = router;

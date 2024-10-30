@@ -18,7 +18,7 @@ app.use(cors());
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 // Khái báo đăng ký routes
-const { authRoutes, userRoutes,setupRoutes,assistantRoutes,fileRoutes,conversationRoutes,courseRoutes,lessonRoutes,packageRoutes,licenseRoutes,navRoutes,contractRoutes } = require('./app/routes');
+const { authRoutes, userRoutes,setupRoutes,assistantRoutes,fileRoutes,conversationRoutes,courseRoutes,lessonRoutes,packageRoutes,licenseRoutes,navRoutes,contractRoutes,promptRoutes } = require('./app/routes');
 app.use('/api/auth', authRoutes);
 app.use("/api", userRoutes);
 app.use("/api", setupRoutes);
@@ -31,6 +31,7 @@ app.use("/api", packageRoutes);
 app.use("/api", licenseRoutes);
 app.use("/api", navRoutes);
 app.use("/api", contractRoutes);
+app.use("/api", promptRoutes);
 
 
 

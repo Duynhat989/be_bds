@@ -21,7 +21,7 @@ const Conversation = sequelize.define(
       allowNull: false,
     },
     assistant_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     messages: {

@@ -5,6 +5,7 @@ const { encryption, compare } = require('../utils/encode');
 const { Sequelize, Op } = require('sequelize');
 
 const multer = require('multer');
+const { WordProcessor } = require('../modules/WordProcessor.module');
 
 // Định nghĩa đường dẫn lưu trữ file Word
 const STORE_PATH = path.join(__dirname, '../../stores');
@@ -30,7 +31,8 @@ exports.contracts = async (req, res) => {
         let contracts = await Contract.findAll({
             where: {
                 status: 1
-            }
+            },
+            attributes:["id","name","description","image","input","status"]
         });
         res.status(200).json({
             success: true,
@@ -68,7 +70,13 @@ exports.create = async (req, res) => {
         res.status(200).json({
             success: true,
             message: "Contract created successfully",
-            data: newContract
+            data: {
+                id:newContract.id,
+                description:newContract.description,
+                image:newContract.image,
+                input:newContract.input,
+                status:newContract.status
+            }
         });
         try {
             
@@ -109,7 +117,13 @@ exports.update = async (req, res) => {
             res.status(200).json({
                 success: true,
                 message: "Contract updated successfully",
-                data: contract
+                contrack:{
+                    id:contract.id,
+                    description:contract.description,
+                    image:contract.image,
+                    input:contract.input,
+                    status:contract.status
+                }
             });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
@@ -129,7 +143,8 @@ exports.findByName = async (req, res) => {
                 name: {
                     [Op.like]: `%${name}%`
                 }
-            }
+            },
+            attributes:["id","name","description","image","input","status"]
         });
 
         res.status(200).json({
@@ -158,7 +173,13 @@ exports.findById = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            data: contract
+            data: {
+                id:contract.id,
+                description:contract.description,
+                image:contract.image,
+                input:contract.input,
+                status:contract.status
+            }
         });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -191,6 +212,45 @@ exports.delete = async (req, res) => {
         // Xóa hợp đồng
         await contract.destroy();
 
+        res.status(200).json({
+            success: true,
+            message: "Contract and associated file deleted successfully"
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+
+// Rà soát hợp đồng
+exports.process = async (req, res) => {
+    try {
+        const { id } = req.body;
+        
+        res.status(200).json({
+            success: true,
+            message: "Contract and associated file deleted successfully"
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// Tạo hợp đồng theo mẫu 
+exports.render = async (req, res) => {
+    try {
+        const { id } = req.body;
+        var contract = Contract.findByPk(id)
+        if (!contract) {
+            return res.status(404).json({ success: false, message: "Contract not found" });
+        }
+
+        var proccesser = new WordProcessor(contract.template_contract)
+        await proccesser.readAndReplace([
+            {
+                
+            }
+        ])
         res.status(200).json({
             success: true,
             message: "Contract and associated file deleted successfully"
