@@ -36,6 +36,11 @@ const Pay = sequelize.define(
             allowNull: false,
             defaultValue: "" //Mã số thanh toán
         },
+        message_code: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: "" //Nôi dung chuyển khoản
+        },
         status_pay: {
             type: DataTypes.INTEGER,
             allowNull: false,

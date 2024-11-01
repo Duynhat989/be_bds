@@ -251,9 +251,16 @@ const getLicense = async (user_id) => {
 // Lịch sử chat theo user
 exports.chatHistory = async (req, res) => {
     try {
-        const { page = 0, limit = 10 } = req.query;
+        const { page = 1, limit = 10 } = req.query;
+        const offset = parseInt(page - 1) * parseInt(limit) 
         const { assistant_id } = req.body
         const user_id = req.user.id
+        let count = await Conversation.count({
+            where:{
+                user_id:user_id,
+                assistant_id:assistant_id
+            },
+        });
         let lst = await Conversation.findAll({
             where:{
                 user_id:user_id,
@@ -261,26 +268,39 @@ exports.chatHistory = async (req, res) => {
             },
             attributes:["id","thread_id","messages"],
             limit: parseInt(limit), 
-            offset: parseInt(page) * parseInt(limit) 
+            offset: offset 
         })
+        console.log(lst)
         let dataLst = []
         for (let index = 0; index < lst.length; index++) {
             const element = lst[index];
             let data = JSON.parse(element.messages)
-            if(data.length > 0){
-                let text = data[0].content
-                dataLst.push({
-                    id:element.id,
-                    thread_idid:element.thread_id,
-                    name:text.length > 50 ? text.slice(0,50) : text = text
-                })
+            if(data !=  undefined){
+                if(data[0]){
+                    let text = data[0].content
+                    dataLst.push({
+                        id:element.id,
+                        thread_idid:element.thread_id,
+                        name:text.length > 50 ? text.slice(0,50) : text = text
+                    })
+                }else{
+                    dataLst.push({
+                        id:element.id,
+                        thread_idid:element.thread_id,
+                        name:"No message"
+                    })
+                }
+                
             }
         }
         // Danh sách cuộc hội thoại này
         res.status(200).json({
             success: true,
             message: `Lịch sử trò chuyện`,
-            data: dataLst
+            data: dataLst,
+            total:count,
+            page:page,
+            limit:limit
         });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });

@@ -4,14 +4,24 @@ const { encryption, compare } = require('../utils/encode');
 // Lấy danh sách tất cả học sinh
 exports.users = async (req, res) => {
     try {
+        const { page = 1, limit = 10 } = req.query;
+        const offset = parseInt(page - 1) * parseInt(limit) 
+        let count = await User.count({
+            where: {},
+        });
         const users = await User.findAll({
             where: {},
-            attributes: ['id', 'name', 'phone', 'email', 'role']
+            attributes: ['id', 'name', 'phone', 'email', 'role'],
+            limit: parseInt(limit),
+            offset: offset
         });
         res.status(200).json({
             success: true,
             message: `Users success.`,
-            data: users
+            data: users,
+            total:count,
+            page:page,
+            limit:limit
         });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });

@@ -28,18 +28,27 @@ const upload = multer({ storage: storage });
 // Lấy danh sách tất cả hợp đồng
 exports.contracts = async (req, res) => {
     try {
-        const { page = 0, limit = 10 } = req.query;
+        const { page = 1, limit = 10 } = req.query;
+        const offset = parseInt(page - 1) * parseInt(limit) 
+        let count = await Contract.count({
+            where: {
+                status: 1
+            },
+        });
         let contracts = await Contract.findAll({
             where: {
                 status: 1
             },
-            attributes:["id","name","description","image","input","status"],
-            limit: parseInt(limit), 
-            offset: parseInt(page) * parseInt(limit) 
+            attributes: ["id", "name", "description", "image", "input", "status"],
+            limit: parseInt(limit),
+            offset: offset
         });
         res.status(200).json({
             success: true,
-            contracts: contracts
+            contracts: contracts,
+            total: count,
+            page: page,
+            limit: limit
         });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -64,7 +73,7 @@ exports.create = async (req, res) => {
         }
         const newContract = await Contract.create({
             name,
-            description:description,  // Đảm bảo không null
+            description: description,  // Đảm bảo không null
             image,
             template_contract: req.file.path,
             input,
@@ -74,15 +83,15 @@ exports.create = async (req, res) => {
             success: true,
             message: "Contract created successfully",
             data: {
-                id:newContract.id,
-                description:newContract.description,
-                image:newContract.image,
-                input:newContract.input,
-                status:newContract.status
+                id: newContract.id,
+                description: newContract.description,
+                image: newContract.image,
+                input: newContract.input,
+                status: newContract.status
             }
         });
         try {
-            
+
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
         }
@@ -110,7 +119,7 @@ exports.update = async (req, res) => {
             contract.description = description || contract.description;
             contract.image = image || contract.image;
             contract.input = input || contract.input;
-            
+
             if (req.file) {
                 contract.template_contract = req.file.path;
             }
@@ -120,12 +129,12 @@ exports.update = async (req, res) => {
             res.status(200).json({
                 success: true,
                 message: "Contract updated successfully",
-                contrack:{
-                    id:contract.id,
-                    description:contract.description,
-                    image:contract.image,
-                    input:contract.input,
-                    status:contract.status
+                contrack: {
+                    id: contract.id,
+                    description: contract.description,
+                    image: contract.image,
+                    input: contract.input,
+                    status: contract.status
                 }
             });
         } catch (error) {
@@ -147,7 +156,7 @@ exports.findByName = async (req, res) => {
                     [Op.like]: `%${name}%`
                 }
             },
-            attributes:["id","name","description","image","input","status"]
+            attributes: ["id", "name", "description", "image", "input", "status"]
         });
 
         res.status(200).json({
@@ -177,11 +186,11 @@ exports.findById = async (req, res) => {
         res.status(200).json({
             success: true,
             data: {
-                id:contract.id,
-                description:contract.description,
-                image:contract.image,
-                input:contract.input,
-                status:contract.status
+                id: contract.id,
+                description: contract.description,
+                image: contract.image,
+                input: contract.input,
+                status: contract.status
             }
         });
     } catch (error) {
@@ -226,10 +235,10 @@ exports.delete = async (req, res) => {
 
 
 // Rà soát hợp đồng
-exports.process = async (req, res) => {
+exports.appProcess = async (req, res) => {
     try {
         const { id } = req.body;
-        
+
         res.status(200).json({
             success: true,
             message: "Contract and associated file deleted successfully"
@@ -239,26 +248,40 @@ exports.process = async (req, res) => {
     }
 };
 
-// Tạo hợp đồng theo mẫu 
-exports.render = async (req, res) => {
-    try {
-        const { id } = req.body;
-        var contract = Contract.findByPk(id)
-        if (!contract) {
-            return res.status(404).json({ success: false, message: "Contract not found" });
-        }
+exports.appRender = async (req, res) => {
 
-        var proccesser = new WordProcessor(contract.template_contract)
-        await proccesser.readAndReplace([
-            {
-                
-            }
-        ])
-        res.status(200).json({
-            success: true,
-            message: "Contract and associated file deleted successfully"
-        });
+    const { id, replaceData } = req.body;
+
+
+    // console.log("replace: ", id)
+    var contract = await Contract.findByPk(id)
+    if (!contract) {
+        return res.status(404).json({ success: false, message: "Contract not found" });
+    }
+    console.log("replace: ", replaceData)
+
+    var proccesser = new WordProcessor(contract.template_contract)
+    let replacedBuffer = await proccesser.readAndReplace(replaceData)
+
+
+    if (replacedBuffer) {
+        // Đặt tên file cho file tải xuống
+        const filename = 'document_replaced.docx';
+
+        // Gửi file để tải xuống
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        res.send(replacedBuffer);
+    } else {
+        res.status(500).send('Có lỗi xảy ra khi tạo file.');
+    }
+    // return res.status(200).json({
+    //     success: true,
+    //     message: "Contract and associated file deleted successfully"
+    // });
+    try {
+
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: error.message });
     }
 };

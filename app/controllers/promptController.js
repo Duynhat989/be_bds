@@ -7,19 +7,37 @@ const STATUS = {
 // Lấy danh sách tất cả Prompt với status là ON
 exports.getPrompts = async (req, res) => {
     try {
-        const { assistant_id } = req.body
+        const { assistant_id, page = 1, limit = 10 } = req.body
+        const offset = parseInt(page - 1) * parseInt(limit) 
         const user_id = req.user.id
+        console.log({ 
+            status: STATUS.ON,
+            assistant_id:assistant_id,
+            user_id:user_id
+        })
+        let count = await Prompt.count({
+            where: { 
+                status: STATUS.ON,
+                assistant_id:assistant_id,
+                user_id:user_id
+            },
+        });
         let prompts = await Prompt.findAll({
             where: { 
                 status: STATUS.ON,
                 assistant_id:assistant_id,
                 user_id:user_id
             },
-            attributes:["id","prompt_text","status"]
+            attributes:["id","prompt_text","status"],
+            limit: parseInt(limit),
+            offset: offset
         });
         res.status(200).json({
             success: true,
-            prompts: prompts
+            prompts: prompts,
+            total:count,
+            page:page,
+            limit:limit
         });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });

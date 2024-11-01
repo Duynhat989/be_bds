@@ -1,5 +1,6 @@
 const fs = require('fs');
-const { Document, Packer, Paragraph, TextRun } = require("docx");
+const PizZip = require('pizzip');
+const Docxtemplater = require('docxtemplater');
 
 class WordProcessor {
   constructor(xpath) {
@@ -8,39 +9,47 @@ class WordProcessor {
 
   async readAndReplace(replacements) {
     try {
-      const buffer = fs.readFileSync(this.xpath);
+      // Đọc file .docx vào buffer
+      const content = fs.readFileSync(this.xpath, 'binary');
+      const zip = new PizZip(content);
 
-      // Tạo tài liệu mới từ buffer đã đọc
-      const doc = await Document.load(buffer);
-
-      // Lặp qua tất cả các đoạn và thay thế từ khóa
-      doc.paragraphs.forEach((paragraph) => {
-        paragraph.children.forEach((child) => {
-          if (child instanceof TextRun) {
-            let text = child.text;
-            for (let [key, value] of Object.entries(replacements)) {
-              const regex = new RegExp(key, 'g');
-              text = text.replace(regex, value);
-            }
-            child.text = text;
-          }
-        });
+      // Khởi tạo docxtemplater từ zip đã đọc
+      const doc = new Docxtemplater(zip, {
+        paragraphLoop: true,
+        linebreaks: true,
+        delimiters: {
+          start: "<@",
+          end: "@>"
+        }
       });
 
-      // Xuất file đã thay thế
-      const replacedBuffer = await Packer.toBuffer(doc);
-      fs.writeFileSync(this.xpath, replacedBuffer);
+      // Thay thế từ khóa trong file .docx
+      console.log(replacements)
+      doc.setData(replacements);
+
+      try {
+        doc.render();
+      } catch (error) {
+        console.error("Lỗi khi render file Word:", error);
+        return;
+      }
+
+      // Xuất file đã thay thế vào buffer
+      const replacedBuffer = doc.getZip().generate({ type: 'nodebuffer' });
+      // fs.writeFileSync(this.xpath, replacedBuffer);
       console.log("Nội dung đã được thay thế thành công!");
+      // this file 
+      return replacedBuffer
     } catch (error) {
       console.error("Lỗi khi đọc hoặc thay thế file Word:", error);
+      return false
     }
   }
 }
 
 module.exports = {
-    WordProcessor
+  WordProcessor
 };
-
 
 // Sử dụng class
 // const processor = new WordProcessor('path/to/your/document.docx');

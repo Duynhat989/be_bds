@@ -2,14 +2,26 @@ const { License, STATUS, Package, Day } = require("../models");
 
 exports.getLicenses = async (req, res) => {
     try {
-        let licenses = await License.findAll({
+        const { page = 1, limit = 10 } = req.query;
+        const offset = parseInt(page - 1) * parseInt(limit) 
+        let count = await License.count({
             where: {
                 status: STATUS.ON
             }
         });
+        let licenses = await License.findAll({
+            where: {
+                status: STATUS.ON
+            },
+            limit: parseInt(limit),
+            offset: offset
+        });
         res.status(200).json({
             success: true,
-            licenses: licenses
+            licenses: licenses,
+            total:count,
+            page:page,
+            limit:limit
         });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
