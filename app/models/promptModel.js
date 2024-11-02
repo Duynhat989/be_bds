@@ -16,6 +16,10 @@ const Prompt = sequelize.define(
             type: DataTypes.INTEGER,
             allowNull: false
         },
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         prompt_text: {
             type: DataTypes.TEXT('long'),
             allowNull: false,

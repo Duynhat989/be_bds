@@ -28,7 +28,7 @@ exports.getPrompts = async (req, res) => {
                 assistant_id:assistant_id,
                 user_id:user_id
             },
-            attributes:["id","prompt_text","status"],
+            attributes:["id","name","prompt_text","status"],
             limit: parseInt(limit),
             offset: offset
         });
@@ -58,6 +58,7 @@ exports.findPromptById = async (req, res) => {
             success: true,
             data: {
                 id:prompt.id,
+                name:prompt.name,
                 prompt_text:prompt.prompt_text,
                 status:prompt.status
             }
@@ -70,12 +71,13 @@ exports.findPromptById = async (req, res) => {
 // Tạo Prompt mới
 exports.createPrompt = async (req, res) => {
     try {
-        const { assistant_id, prompt_text } = req.body;
+        const { assistant_id, prompt_text,name } = req.body;
         const user_id = req.user.id
         // Tạo Prompt mới
         const newPrompt = await Prompt.create({
             user_id,
             assistant_id,
+            name,
             prompt_text,
             status: STATUS.ON
         });
@@ -85,6 +87,7 @@ exports.createPrompt = async (req, res) => {
             message: "Prompt created successfully",
             data: {
                 id:newPrompt.id,
+                name:newPrompt.name,
                 prompt_text:newPrompt.prompt_text,
                 status:newPrompt.status
             }
@@ -97,7 +100,8 @@ exports.createPrompt = async (req, res) => {
 // Cập nhật Prompt theo ID
 exports.updatePromptById = async (req, res) => {
     try {
-        const { id, prompt_text, status } = req.body;
+        const { id, prompt_text,
+            name, status } = req.body;
         const user_id = req.user.id
         // Tìm Prompt theo ID
         const prompt = await Prompt.findByPk(id);
@@ -109,6 +113,7 @@ exports.updatePromptById = async (req, res) => {
         }
         // Cập nhật thông tin
         prompt.prompt_text = prompt_text || prompt.prompt_text;
+        prompt.name = name || prompt.name;
         prompt.status = status || prompt.status;
 
         // Lưu thay đổi

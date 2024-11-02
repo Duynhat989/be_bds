@@ -28,17 +28,22 @@ const upload = multer({ storage: storage });
 // Lấy danh sách tất cả hợp đồng
 exports.contracts = async (req, res) => {
     try {
-        const { page = 1, limit = 10 } = req.query;
+        const { page = 1, limit = 10, search = '' } = req.query;
         const offset = parseInt(page - 1) * parseInt(limit) 
+        let wge = {
+            status: 1
+        }
+        if (search.length > 2) {
+            wge.name = {
+                [Op.like]: `%${search}%`
+            }
+        }
+        // Phần tìm kiếm 
         let count = await Contract.count({
-            where: {
-                status: 1
-            },
+            where: wge
         });
         let contracts = await Contract.findAll({
-            where: {
-                status: 1
-            },
+            where: wge,
             attributes: ["id", "name", "description", "image", "input", "status"],
             limit: parseInt(limit),
             offset: offset
@@ -252,13 +257,10 @@ exports.appRender = async (req, res) => {
 
     const { id, replaceData } = req.body;
 
-
-    // console.log("replace: ", id)
     var contract = await Contract.findByPk(id)
     if (!contract) {
         return res.status(404).json({ success: false, message: "Contract not found" });
     }
-    console.log("replace: ", replaceData)
 
     var proccesser = new WordProcessor(contract.template_contract)
     let replacedBuffer = await proccesser.readAndReplace(replaceData)

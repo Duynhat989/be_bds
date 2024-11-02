@@ -5,26 +5,30 @@ const { encryption, compare } = require('../utils/encode');
 // Lấy danh sách tất cả học sinh
 exports.courses = async (req, res) => {
     try {
-        const { page = 1, limit = 10 } = req.query;
-        const offset = parseInt(page - 1) * parseInt(limit) 
-        let countCourse = await Course.count({
-            where: {
-                status: 1
+        const { page = 1, limit = 10, search = '' } = req.query;
+        const offset = parseInt(page - 1) * parseInt(limit)
+        let wge = {
+            status: 1
+        }
+        if (search.length > 2) {
+            wge.name = {
+                [Op.like]: `%${search}%`
             }
+        }
+        let countCourse = await Course.count({
+            where: wge
         });
         let courses = await Course.findAll({
-            where: {
-                status: 1
-            },
+            where: wge,
             limit: parseInt(limit),
             offset: offset
         })
         res.status(200).json({
             success: true,
             courses: courses,
-            total:countCourse,
-            page:page,
-            limit:limit
+            total: countCourse,
+            page: page,
+            limit: limit
 
         });
     } catch (error) {
@@ -102,6 +106,32 @@ exports.find = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+// Tìm kiếm tên 
+// exports.findByName = async (req, res) => {
+//     try {
+//         const { name } = req.body;
+
+//         if (!name) {
+//             return res.status(400).json({ success: false, message: "Contract name is required." });
+//         }
+
+//         const contracts = await Course.findAll({
+//             where: {
+//                 name: {
+//                     [Op.like]: `%${name}%`
+//                 }
+//             },
+//             attributes: ["id", "name", "description", "image", "input", "status"]
+//         });
+
+//         res.status(200).json({
+//             success: true,
+//             data: contracts
+//         });
+//     } catch (error) {
+//         res.status(500).json({ success: false, message: error.message });
+//     }
+// };
 exports.create = async (req, res) => {
     try {
         const { name, detail, image, price, sign_in } = req.body;

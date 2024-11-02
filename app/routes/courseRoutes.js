@@ -9,6 +9,8 @@ const auth = require('../middlewares/authMiddleware.js');
 router.get("/courses", auth([1, 3]), courseController.courses);
 // Tìm khóa học 
 router.post("/course/find", auth([1,3]),validate(['id']), courseController.find);
+// Tìm kiếm theo tên 
+router.post("/course/findName", auth([1,3]),validate(['id']), courseController.find);
 // Tạo trợ lý
 router.post("/course/create", auth([1]),validate(['name']), courseController.create);
 // Cập nhật trợ lý

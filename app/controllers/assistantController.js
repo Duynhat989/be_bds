@@ -5,14 +5,23 @@ const { Assistaint } = require('../modules/assistaint.module')
 // Lấy danh sách tất cả học sinh
 exports.getAllAssistant = async (req, res) => {
     try {
-        const { page = 1, limit = 10 } = req.query;
+        const { page = 1, limit = 10, search = '' } = req.query;
         const offset = parseInt(page - 1) * parseInt(limit) 
+        // Phần tìm kiếm theo tên 
+        let wge = {
+            status: STATUS.ON
+        }
+        if (search.length > 2) {
+            wge.name = {
+                [Op.like]: `%${search}%`
+            }
+        }
         // Danh sách trợ lý
         let count = await Assistant.count({
-            where: { status: STATUS.ON }
+            where: wge
         });
         const data = await Assistant.findAll({
-            where: { status: STATUS.ON },
+            where: wge,
             attributes: ['id', 'name', 'detail', 'image', 'suggests','view'],
             limit: parseInt(limit), 
             offset: offset

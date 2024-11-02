@@ -2,7 +2,6 @@ const { getPayloadToken } = require('../middlewares/manageToken');
 
 const auth = (roles = []) => {
   return (req, res, next) => {
-    console.log("replace: ")
     if (typeof roles === 'number') {
       roles = [roles];
     }

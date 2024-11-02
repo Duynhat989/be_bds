@@ -18,7 +18,6 @@ const validate = (validations) => {
                 statusCode: 400
             });
         }
-        console.log("replace: ")
         next();
     };
 };
