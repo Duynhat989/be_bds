@@ -44,7 +44,7 @@ class Assistaint {
         const vectors = vectorStores.data
         for (let index = 0; index < vectors.length; index++) {
             const vector = vectors[index];
-            if(nameVector == vector.name){
+            if (nameVector == vector.name) {
                 this.delVector(vector.id)
             }
         }
@@ -86,49 +86,35 @@ class Assistaint {
         return messages
     }
     chat = async (assistant_id, thread_id, sendMessage) => {
-        console.log("LOGCH:iooo")
-        const run = this.openai.beta.threads.runs.stream(thread_id, {
-            assistant_id: assistant_id
-        })
-            .on('textCreated', (text) => {
-                console.log("LOG: ", text)
-            })
-            .on('textDelta', (textDelta, snapshot) => {
-                // console.log("Xinchaof")
-                console.log("LOGCH: ", textDelta.value)
-                clearTimeout(this.textTimeout);
-                sendMessage({
-                    completed: false,
-                    text: textDelta.value,
-                    full: snapshot.value
-                });
-                this.textTimeout = setTimeout(() => {
-                    sendMessage({
-                        completed: true,
-                        text: textDelta.value,
-                        full: snapshot.value
-                    });
-                }, 4000);
-            })
-            .on('toolCallCreated', (toolCall) => {
-                console.log("LOG1: ", toolCall)
-                process.stdout.write(`\nassistant > ${toolCall.type}\n\n`)
-            })
-            .on('toolCallDelta', (toolCallDelta, snapshot) => {
-                if (toolCallDelta.type === 'code_interpreter') {
-                    if (toolCallDelta.code_interpreter.input) {
-                        process.stdout.write(toolCallDelta.code_interpreter.input);
-                    }
-                    if (toolCallDelta.code_interpreter.outputs) {
-                        process.stdout.write("\noutput >\n");
-                        toolCallDelta.code_interpreter.outputs.forEach(output => {
-                            if (output.type === "logs") {
-                                process.stdout.write(`\n${output.logs}\n`);
-                            }
+        const stream = await this.openai.beta.threads.runs.create(
+            thread_id,
+            { assistant_id: assistant_id, stream: true }
+        );
+        let str = ""
+        let timeout = null
+
+        for await (const event of stream) {
+            // Hoạn thiên data
+            if(event.event == "thread.message.delta"){
+                str += event.data.delta.content[0].text.value
+                if(!timeout){
+                    timeout = setTimeout(async ()=>{
+                        await sendMessage({
+                            completed: false,
+                            full: str
                         });
-                    }
+                        timeout = null
+                    })
                 }
-            });
+            }
+            if(event.event == "thread.run.completed"){
+                await sendMessage({
+                    completed: true,
+                    full: str
+                });
+            }
+            // console.log(str)
+        }
         return true;
     };
     generateRandomMD5() {

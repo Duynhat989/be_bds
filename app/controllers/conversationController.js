@@ -103,7 +103,7 @@ exports.createConversation = async (req, res) => {
             console.log('---------------------------------------------')
             console.log(data)
             if (!data.completed) {
-                res.write(`${JSON.stringify({
+                await res.write(`${JSON.stringify({
                     success: true,
                     data
                 })}\r\n\r\n`);
@@ -120,12 +120,14 @@ exports.createConversation = async (req, res) => {
                 })
                 await updateConversation(JSON.stringify(newMsg), msg.id)
 
-                res.write(`${JSON.stringify({
+                
+                await res.write(`${JSON.stringify({
                     success: true,
                     data
                 })}\r\n\r\n`);
                 res.end();
             }
+            return
         }
         module.chat(assistant.assistant_id, `thread_${thread_id}`, sendMessage)
     } catch (error) {
