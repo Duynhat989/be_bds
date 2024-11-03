@@ -104,10 +104,7 @@ exports.createConversation = async (req, res) => {
             if (!data.completed) {
                 res.write(`${JSON.stringify({
                     success: true,
-                    data:{
-                        completed:data.completed,
-                        text:data.text
-                    }
+                    data
                 })}\r\n\r\n`);
             } else {
                 // update tin nhắn 
@@ -124,10 +121,7 @@ exports.createConversation = async (req, res) => {
 
                 res.write(`${JSON.stringify({
                     success: true,
-                    data:{
-                        completed:data.completed,
-                        text:data.text
-                    }
+                    data
                 })}\r\n\r\n`);
                 res.end();
             }
