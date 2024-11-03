@@ -99,7 +99,7 @@ exports.createConversation = async (req, res) => {
         res.setHeader('Connection', 'keep-alive');
         // Tin nhắn cũ
         const sendMessage = async (data) => {
-            // console.log(data)
+            console.log(data)
             if (!data.completed) {
                 res.write(`${JSON.stringify({
                     success: true,
