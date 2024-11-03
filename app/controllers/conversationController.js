@@ -104,7 +104,7 @@ exports.createConversation = async (req, res) => {
                 res.write(`${JSON.stringify({
                     success: true,
                     data
-                })}||`);
+                })}\r\n\r\n`);
             } else {
                 // update tin nhắn 
                 let newMsg = JSON.parse(msg.messages) || []
@@ -117,10 +117,11 @@ exports.createConversation = async (req, res) => {
                     content: data.full
                 })
                 await updateConversation(JSON.stringify(newMsg), msg.id)
+
                 res.write(`${JSON.stringify({
                     success: true,
                     data
-                })}||`);
+                })}\r\n\r\n`);
                 res.end();
             }
         }
