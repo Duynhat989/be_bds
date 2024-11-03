@@ -86,6 +86,7 @@ class Assistaint {
         return messages
     }
     chat = async (assistant_id, thread_id, sendMessage) => {
+        console.log("LOGCH:iooo")
         const run = this.openai.beta.threads.runs.stream(thread_id, {
             assistant_id: assistant_id
         })
@@ -93,6 +94,8 @@ class Assistaint {
                 console.log("LOG: ", text)
             })
             .on('textDelta', (textDelta, snapshot) => {
+                // console.log("Xinchaof")
+                console.log("LOGCH: ", textDelta.value)
                 clearTimeout(this.textTimeout);
                 sendMessage({
                     completed: false,
