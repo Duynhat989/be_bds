@@ -104,7 +104,7 @@ class Assistaint {
                             full: str
                         });
                         timeout = null
-                    },100)
+                    })
                 }
             }
             if(event.event == "thread.run.completed"){
