@@ -104,7 +104,7 @@ exports.createConversation = async (req, res) => {
                 res.write(`${JSON.stringify({
                     success: true,
                     data
-                })}\r\n`);
+                })}||`);
             } else {
                 // update tin nhắn 
                 let newMsg = JSON.parse(msg.messages) || []
@@ -120,7 +120,7 @@ exports.createConversation = async (req, res) => {
                 res.write(`${JSON.stringify({
                     success: true,
                     data
-                })}\r\n`);
+                })}||`);
                 res.end();
             }
         }
