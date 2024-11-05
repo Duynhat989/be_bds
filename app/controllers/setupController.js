@@ -16,6 +16,105 @@ exports.getAllSetup = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+exports.saveAllSetup = async (req, res) => {
+    try {
+        const { API_KEY,API_STATUS,API_ESTATE,API_FINANCEAL,API_SUMMARY,API_TEAMTRAINING,API_CONTRACT,API_REP_CONTRACT } = req.body
+        if(API_KEY){
+            const item = await Setup.findOne({
+                where:{
+                    name:'API_KEY'
+                }
+            })
+            if(item){
+                item.value = API_KEY
+                await item.save();
+            }
+        }
+        if(API_STATUS){
+            const item = await Setup.findOne({
+                where:{
+                    name:'API_STATUS'
+                }
+            })
+            if(item){
+                item.value = API_STATUS
+                await item.save();
+            }
+        }
+        if(API_ESTATE){
+            const item = await Setup.findOne({
+                where:{
+                    name:'API_ESTATE'
+                }
+            })
+            if(item){
+                item.value = API_ESTATE
+                await item.save();
+            }
+        }
+        if(API_FINANCEAL){
+            const item = await Setup.findOne({
+                where:{
+                    name:'API_FINANCEAL'
+                }
+            })
+            if(item){
+                item.value = API_FINANCEAL
+                await item.save();
+            }
+        }
+        if(API_SUMMARY){
+            const item = await Setup.findOne({
+                where:{
+                    name:'API_SUMMARY'
+                }
+            })
+            if(item){
+                item.value = API_SUMMARY
+                await item.save();
+            }
+        }
+        if(API_TEAMTRAINING){
+            const item = await Setup.findOne({
+                where:{
+                    name:'API_TEAMTRAINING'
+                }
+            })
+            if(item){
+                item.value = API_TEAMTRAINING
+                await item.save();
+            }
+        }
+        if(API_CONTRACT){
+            const item = await Setup.findOne({
+                where:{
+                    name:'API_CONTRACT'
+                }
+            })
+            if(item){
+                item.value = API_CONTRACT
+                await item.save();
+            }
+        }
+        if(API_REP_CONTRACT){
+            const item = await Setup.findOne({
+                where:{
+                    name:'API_REP_CONTRACT'
+                }
+            })
+            if(item){
+                item.value = API_REP_CONTRACT
+                await item.save();
+            }
+        }
+        res.status(200).json({
+            success: true,
+            message: `Save successs`
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
 exports.getStatus = async (req, res) => {
     try {
         const setups = await Setup.findOne({ 

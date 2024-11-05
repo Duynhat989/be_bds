@@ -36,6 +36,7 @@
     "node-fetch": "^2.6.7",
     "nodemon": "^2.0.22",
     "openai": "^4.51.0",
+    "pdf-parse": "^1.1.1",
     "pg": "^8.11.3",
     "pizzip": "^3.1.7",
     "sequelize": "^6.34.0",

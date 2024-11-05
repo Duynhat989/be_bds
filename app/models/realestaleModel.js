@@ -11,7 +11,7 @@ const RealEstate = sequelize.define(
   "RealEstates",
   {
     title: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     description: {
@@ -19,15 +19,27 @@ const RealEstate = sequelize.define(
       allowNull: false,
     },
     price: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: DataTypes.STRING, //Mức giá
+      allowNull: true,
     },
     area: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: DataTypes.STRING, //Diện tích
+      allowNull: true,
     },
     location: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING, //Vị trí
+      allowNull: true,
+    },
+    exten: {
+      type: DataTypes.STRING, //Tiện ích
+      allowNull: true,
+    },
+    base_url: {
+      type: DataTypes.STRING, //Đường dẫn gốc
+      allowNull: false,
+    },
+    keyword: {
+      type: DataTypes.TEXT('long'), //Đường dẫn gốc
       allowNull: false,
     },
     image: {

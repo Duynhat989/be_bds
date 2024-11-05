@@ -13,6 +13,7 @@ const navRoutes = require('./navRoutes');
 const contractRoutes = require('./contractRoutes');
 const promptRoutes = require('./promptRoutes');
 const payRoutes = require('./payRoutes');
+const realestaleRoutes = require('./realestaleRoutes');
 module.exports = {
   authRoutes,
   userRoutes,
@@ -28,5 +29,6 @@ module.exports = {
   navRoutes,
   contractRoutes,
   promptRoutes,
-  payRoutes
+  payRoutes,
+  realestaleRoutes
 }

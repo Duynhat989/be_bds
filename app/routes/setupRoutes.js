@@ -7,9 +7,12 @@ const auth = require('../middlewares/authMiddleware.js');
 router.get("/setup", auth([1]), setupController.getAllSetup);
 
 // Lưu cài đặt
-router.get("/setup/save", auth([1, 3]),setupController.getAllSetup);
+router.post("/setup/save", auth([1]),setupController.saveAllSetup);
 
 
 router.get("/setup/status", setupController.getStatus);
+
+// api get setup 
+
 
 module.exports = router;

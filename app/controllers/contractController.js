@@ -6,6 +6,12 @@ const { Sequelize, Op } = require('sequelize');
 
 const multer = require('multer');
 const { WordProcessor } = require('../modules/WordProcessor.module');
+const { Assistaint } = require('../modules/assistaint.module')
+
+
+const mammoth = require('mammoth');
+const pdfParse = require('pdf-parse');
+
 
 // Định nghĩa đường dẫn lưu trữ file Word
 const STORE_PATH = path.join(__dirname, '../../stores');
@@ -29,7 +35,7 @@ const upload = multer({ storage: storage });
 exports.contracts = async (req, res) => {
     try {
         const { page = 1, limit = 10, search = '' } = req.query;
-        const offset = parseInt(page - 1) * parseInt(limit) 
+        const offset = parseInt(page - 1) * parseInt(limit)
         let wge = {
             status: 1
         }
@@ -238,52 +244,84 @@ exports.delete = async (req, res) => {
     }
 };
 
-
-// Rà soát hợp đồng
-exports.appProcess = async (req, res) => {
-    try {
-        const { id } = req.body;
-
-        res.status(200).json({
-            success: true,
-            message: "Contract and associated file deleted successfully"
-        });
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
-};
-
+// Render hợp đồng
 exports.appRender = async (req, res) => {
 
     const { id, replaceData } = req.body;
-
-    var contract = await Contract.findByPk(id)
-    if (!contract) {
-        return res.status(404).json({ success: false, message: "Contract not found" });
-    }
-
-    var proccesser = new WordProcessor(contract.template_contract)
-    let replacedBuffer = await proccesser.readAndReplace(replaceData)
-
-
-    if (replacedBuffer) {
-        // Đặt tên file cho file tải xuống
-        const filename = 'document_replaced.docx';
-
-        // Gửi file để tải xuống
-        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-        res.send(replacedBuffer);
-    } else {
-        res.status(500).send('Có lỗi xảy ra khi tạo file.');
-    }
-    // return res.status(200).json({
-    //     success: true,
-    //     message: "Contract and associated file deleted successfully"
-    // });
     try {
+        var contract = await Contract.findByPk(id)
+        if (!contract) {
+            return res.status(404).json({ success: false, message: "Contract not found" });
+        }
 
+        var proccesser = new WordProcessor(contract.template_contract)
+        let replacedBuffer = await proccesser.readAndReplace(replaceData)
+
+
+        if (replacedBuffer) {
+            // Đặt tên file cho file tải xuống
+            const filename = 'document_replaced.docx';
+
+            // Gửi file để tải xuống
+            res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+            res.send(replacedBuffer);
+        } else {
+            res.status(500).send('Có lỗi xảy ra khi tạo file.');
+        }
     } catch (error) {
         return res.status(500).json({ success: false, message: error.message });
     }
+};
+
+// Rà soát hợp đồng
+
+
+exports.appProcess = async (req, res) => {
+    upload.single('contract')(req, res, async (err) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: "File upload failed" });
+        }
+
+        const pathDoc = req.file.path;
+        console.log("Uploaded file path:", pathDoc);
+
+        // Đảm bảo file đã được lưu hoàn tất trước khi đọc
+        fs.access(pathDoc, fs.constants.F_OK, async (fileError) => {
+            if (fileError) {
+                return res.status(404).json({ success: false, message: "File not found or not saved yet" });
+            }
+
+            try {
+                const fileType = req.file.mimetype; // Kiểm tra loại file
+                let fileContent;
+
+                if (fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                    // Đọc file Word (.docx) với đường dẫn file
+                    const result = await mammoth.extractRawText({ path: pathDoc });
+                    fileContent = result.value;
+                } else if (fileType === 'application/pdf') {
+                    // Đọc file PDF
+                    const data = fs.readFileSync(pathDoc);
+                    const pdfData = await pdfParse(data);
+                    fileContent = pdfData.text;
+                } else {
+                    return res.status(400).json({ success: false, message: "Unsupported file type" });
+                }
+
+                res.status(200).json({
+                    success: true,
+                    dataContract: fileContent, // Trả về nội dung của file
+                });
+            } catch (error) {
+                console.error('Error reading file:', error);
+                res.status(500).json({ success: false, message: error.message });
+            } finally {
+                // Xóa file đã upload (tùy chọn)
+                fs.unlink(pathDoc, (err) => {
+                    if (err) console.error('Failed to delete uploaded file:', err);
+                });
+            }
+        });
+    });
 };

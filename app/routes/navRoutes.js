@@ -13,5 +13,8 @@ router.get("/nav/newsSummary", auth([1, 3]),navController.newsSummary);
 // Lưu cài đặt
 router.get("/nav/teamTraining", auth([1, 3]),navController.teamTraining);
 
+// LẤY CÀI ĐẶT
+router.get("/nav/scanContract", auth([1, 3]),navController.scanContract);
+
 
 module.exports = router;
