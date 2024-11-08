@@ -10,7 +10,7 @@ router.get("/estales", auth([1, 3]), estaleController.getAllRealEstates);
 // Tìm khóa học 
 router.post("/estale/find", auth([1,3]),validate(['id']), estaleController.findRealEstateById);
 // Tạo trợ lý
-router.post("/estale/create", auth([1]),validate(['name']), estaleController.createRealEstate);
+router.post("/estale/create", auth([1]),validate(['title']), estaleController.createRealEstate);
 // Cập nhật trợ lý
 router.post("/estale/update", auth([1]),validate(['id']), estaleController.editRealEstate);
 // Xóa khóa học
