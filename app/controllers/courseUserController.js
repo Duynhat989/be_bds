@@ -42,15 +42,17 @@ exports.mySevices = async (req, res) => {
                     },
                     attributes: ["id", "name", "detail", "image", "indexRow", "url_video"]
                 })
-                lstSevices.push({
-                    watched: item.watched,
-                    course: {
-                        ...course.dataValues,
-                        ...{
-                            lessons: lesions
+                if(lesions){
+                    lstSevices.push({
+                        watched: item.watched,
+                        course: {
+                            ...course.dataValues,
+                            ...{
+                                lessons: lesions
+                            }
                         }
-                    }
-                })
+                    })
+                }
             } 
         }
         res.status(200).json({

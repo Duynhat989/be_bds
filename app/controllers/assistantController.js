@@ -7,9 +7,12 @@ exports.getAllAssistant = async (req, res) => {
     try {
         const { page = 1, limit = 10, search = '' } = req.query;
         const offset = parseInt(page - 1) * parseInt(limit) 
+
+        const role = req.user.role
         // Phần tìm kiếm theo tên 
-        let wge = {
-            status: STATUS.ON
+        let wge = {}
+        if(role != 1){
+            wge.status = STATUS.ON
         }
         if (search.length > 2) {
             wge.name = {
