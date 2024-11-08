@@ -92,7 +92,7 @@ exports.createRealEstate = async (req, res) => {
 
 exports.editRealEstate = async (req, res) => {
     try {
-        const { id, title, description, price, area, location, exten, base_url, image } = req.body;
+        const { id, title, description, price, area, location, exten, base_url,keyword, image } = req.body;
 
         // Tìm RealEstate theo ID
         const realEstate = await RealEstate.findByPk(id);
