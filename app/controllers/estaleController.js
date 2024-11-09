@@ -11,7 +11,7 @@ exports.getAllRealEstates = async (req, res) => {
             status: STATUS.ON
         }
         if (search.length > 2) {
-            wge.name = {
+            wge.keyword = {
                 [Op.like]: `%${search}%`
             }
         }
