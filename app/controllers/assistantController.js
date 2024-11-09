@@ -1,6 +1,7 @@
 const { STATUS, Assistant, loadApiKey, loadModel, astCreateRow, findAssistant, astUpdateRow } = require("../models");
 const { encryption, compare } = require('../utils/encode');
 const { Assistaint } = require('../modules/assistaint.module')
+const { Sequelize, Op } = require('sequelize');
 
 // Lấy danh sách tất cả học sinh
 exports.getAllAssistant = async (req, res) => {

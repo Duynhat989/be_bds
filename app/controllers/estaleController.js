@@ -1,4 +1,5 @@
 const { STATUS, RealEstate } = require("../models");
+const { Sequelize, Op } = require('sequelize');
 
 // Lấy danh sách tất cả các RealEstate có status = 1
 exports.getAllRealEstates = async (req, res) => {
@@ -58,6 +59,27 @@ exports.findRealEstateById = async (req, res) => {
                 image: realEstate.image
             }
         });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+exports.findRealEstateByUrl = async (req, res) => {
+    try {
+        const { base_url } = req.body;
+
+        // Tìm RealEstate theo ID
+        const realEstate = await RealEstate.findOne({
+            where:{
+                base_url:base_url
+            }
+        });
+        if (!realEstate) {
+            return res.json({ success: false });
+        }
+        else{
+            return res.json({ success: true });
+        }
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }

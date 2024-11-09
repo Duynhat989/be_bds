@@ -9,6 +9,8 @@ const auth = require('../middlewares/authMiddleware.js');
 router.get("/estales", auth([1, 3]), estaleController.getAllRealEstates);
 // Tìm khóa học 
 router.post("/estale/find", auth([1,3]),validate(['id']), estaleController.findRealEstateById);
+// Kiểm tra theo tên
+router.post("/estale/findUrl", auth([1,3]),validate(['base_url']), estaleController.findRealEstateByUrl);
 // Tạo trợ lý
 router.post("/estale/create", auth([1]),validate(['title']), estaleController.createRealEstate);
 // Cập nhật trợ lý

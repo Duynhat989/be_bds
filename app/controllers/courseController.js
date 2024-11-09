@@ -1,6 +1,7 @@
 const e = require("express");
 const { STATUS, Course, Lesson, courseUser } = require("../models");
 const { encryption, compare } = require('../utils/encode');
+const { Sequelize, Op } = require('sequelize');
 
 // Lấy danh sách tất cả học sinh
 exports.courses = async (req, res) => {

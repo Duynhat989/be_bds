@@ -3,6 +3,7 @@ const path = require('path');
 const { STATUS, Contract } = require("../models");
 const { encryption, compare } = require('../utils/encode');
 const multer = require('multer');
+const { Sequelize, Op } = require('sequelize');
 
 // Định nghĩa đường dẫn lưu trữ file Word
 const STORE_PATH = path.join(__dirname, '../../stores');
