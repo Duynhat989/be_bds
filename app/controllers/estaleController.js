@@ -55,6 +55,7 @@ exports.findRealEstateById = async (req, res) => {
                 area: realEstate.area,
                 location: realEstate.location,
                 exten: realEstate.exten,
+                type: realEstate.type,
                 base_url: realEstate.base_url,
                 image: realEstate.image
             }
@@ -87,7 +88,7 @@ exports.findRealEstateByUrl = async (req, res) => {
 
 exports.createRealEstate = async (req, res) => {
     try {
-        const { title, description, price, area, location, exten, base_url,keyword, image } = req.body;
+        const { title, description, price, area, location, exten,type, base_url,keyword, image } = req.body;
 
         // Tạo RealEstate mới
         const newRealEstate = await RealEstate.create({
@@ -97,6 +98,7 @@ exports.createRealEstate = async (req, res) => {
             area,
             location,
             exten,
+            type:type ? type : "buy",
             base_url,
             keyword,
             image
@@ -114,7 +116,7 @@ exports.createRealEstate = async (req, res) => {
 
 exports.editRealEstate = async (req, res) => {
     try {
-        const { id, title, description, price, area, location, exten, base_url,keyword, image } = req.body;
+        const { id, title, description, price, area, location, exten,type, base_url,keyword, image } = req.body;
 
         // Tìm RealEstate theo ID
         const realEstate = await RealEstate.findByPk(id);
@@ -129,6 +131,7 @@ exports.editRealEstate = async (req, res) => {
         realEstate.area = area || realEstate.area;
         realEstate.location = location || realEstate.location;
         realEstate.exten = exten || realEstate.exten;
+        realEstate.type = type || realEstate.type;
         realEstate.base_url = base_url || realEstate.base_url;
         realEstate.keyword = keyword || realEstate.keyword;
         realEstate.image = image || realEstate.image;

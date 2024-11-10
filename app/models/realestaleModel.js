@@ -34,6 +34,11 @@ const RealEstate = sequelize.define(
       type: DataTypes.STRING, //Tiện ích
       allowNull: true,
     },
+    type: {
+      type: DataTypes.STRING, //mua hoặc thuê
+      allowNull: true,
+      defaultValue:"buy" //rent
+    },
     base_url: {
       type: DataTypes.STRING, //Đường dẫn gốc
       allowNull: false,
