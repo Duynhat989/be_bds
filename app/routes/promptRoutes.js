@@ -9,11 +9,11 @@ router.post("/prompts", auth([1, 3]),validate(['assistant_id']), promptControlle
 // Tìm khóa học 
 router.post("/prompt/find", auth([1,3]),validate(['id']), promptController.findPromptById);
 // Tạo trợ lý
-router.post("/prompt/create", auth([1]),validate(['assistant_id']), promptController.createPrompt);
+router.post("/prompt/create", auth([1,3]),validate(['assistant_id']), promptController.createPrompt);
 // Cập nhật trợ lý
-router.post("/prompt/update", auth([1]),validate(['id']), promptController.updatePromptById);
+router.post("/prompt/update", auth([1,3]),validate(['id']), promptController.updatePromptById);
 // Xóa khóa học
-router.delete("/prompt/delete", auth([1]),validate(['id']), promptController.deletePromptById);
+router.delete("/prompt/delete", auth([1,3]),validate(['id']), promptController.deletePromptById);
 // Tìm khóa học 
 
 

@@ -6,8 +6,6 @@ class Gpt {
     constructor(myKey) {
         this.myKey = myKey
         this.openai = new OpenAI({ apiKey: this.myKey });
-
-
     }
     async chat(sendMessage) {
         const completion = await openai.chat.completions.create({

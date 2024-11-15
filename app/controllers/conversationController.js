@@ -100,8 +100,8 @@ exports.createConversation = async (req, res) => {
         console.log("Xin chào")
         // Tin nhắn cũ
         const sendMessage = async (data) => {
-            console.log('---------------------------------------------')
-            console.log(data)
+            // console.log('---------------------------------------------')
+            // console.log(data)
             if (!data.completed) {
                 await res.write(`${JSON.stringify({
                     success: true,
@@ -275,7 +275,7 @@ exports.chatHistory = async (req, res) => {
             limit: parseInt(limit), 
             offset: offset 
         })
-        console.log(lst)
+        // console.log(lst)
         let dataLst = []
         for (let index = 0; index < lst.length; index++) {
             const element = lst[index];
