@@ -1,34 +1,54 @@
 const { STATUS, RealEstate } = require("../models");
 const { Sequelize, Op } = require('sequelize');
+const removeDiacritics = require('remove-diacritics');  
 
 // Lấy danh sách tất cả các RealEstate có status = 1
 exports.getAllRealEstates = async (req, res) => {
     try {
         const { page = 1, limit = 10, search = '' } = req.query;
-        const offset = parseInt(page - 1) * parseInt(limit) 
+        const offset = parseInt(page - 1) * parseInt(limit);
+        
         // Phần tìm kiếm theo tên 
         let wge = {
             status: STATUS.ON
-        }
-        if (search.length > 1) {
-            wge.keyword = {
-                [Op.like]: `%${search}%`
+        };
+
+        if (search.length > 0) {
+            // Tách các từ trong chuỗi `search`
+            const normalizedSearch = removeDiacritics(search.trim().toLowerCase());
+            const keywords = normalizedSearch.split(' ').filter(word => word.length > 0);
+            // const keywords = search.split(' ').filter(word => word.length > 0);
+            
+            const andConditions = [];
+            for (const word of keywords) {
+                const isNumber = /^\d+$/.test(word);
+                console.log(word)
+                andConditions.push({
+                    keyword: {
+                        [Op.like]: isNumber ? `% ${word}%` : `% ${word} %`
+                    }
+                });
             }
+            wge[Op.and] = andConditions;
+            console.log(JSON.stringify(andConditions))
         }
+
         let count = await RealEstate.count({
             where: wge
         });
+
         let realEstates = await RealEstate.findAll({
             where: wge,
             limit: parseInt(limit), 
             offset: offset
         });
+
         res.status(200).json({
             success: true,
             realEstates: realEstates,
-            total:count,
-            page:page,
-            limit:limit
+            total: count,
+            page: page,
+            limit: limit
         });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
