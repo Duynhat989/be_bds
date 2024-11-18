@@ -118,7 +118,6 @@ exports.updateAssistant = async (req, res) => {
                 }
             }
             // Xóa vector cũ
-            console.log('del vector')
             await module.delVector(assistant_old.vector_id)
 
 
