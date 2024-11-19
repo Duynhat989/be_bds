@@ -1,23 +1,33 @@
 const { ROLES, STATUS, User, License, courseUser } = require("../models");
 const { encryption, compare } = require('../utils/encode');
+const { Sequelize, Op } = require('sequelize');
 
 // Lấy danh sách tất cả học sinh
 exports.users = async (req, res) => {
     try {
-        const { page = 1, limit = 10 } = req.query;
+        const { page = 1, limit = 10,search = '' } = req.query;
         const offset = parseInt(page - 1) * parseInt(limit) 
+        const role = req.user.role
+        // Phần tìm kiếm theo tên 
+        let wge = {}
+        if (search.length > 2) {
+            wge.name = {
+                [Op.like]: `%${search}%`
+            }
+        }
         let count = await User.count({
-            where: {},
+            where: wge,
         });
+        
         const users = await User.findAll({
-            where: {},
+            where: wge,
             attributes: ['id', 'name', 'phone', 'email', 'role'],
             limit: parseInt(limit),
             offset: offset
         });
         res.status(200).json({
             success: true,
-            message: `Users success.`,
+            message: `success.`,
             data: users,
             total:count,
             page:page,

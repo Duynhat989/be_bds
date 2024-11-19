@@ -16,6 +16,10 @@ const Setup = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: false
     },
+    notify: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
     status: {
       type: DataTypes.INTEGER,
       allowNull: false,

@@ -13,6 +13,9 @@ router.get("/nav/newsSummary", auth([1, 3]),navController.newsSummary);
 // Lưu cài đặt
 router.get("/nav/teamTraining", auth([1, 3]),navController.teamTraining);
 
+// Lời khuyên đầu tư
+router.get("/nav/investmentAdvice", auth([1, 3]),navController.investmentAdvice);
+
 // LẤY CÀI ĐẶT
 router.get("/nav/scanContract", auth([1, 3]),navController.scanContract);
 

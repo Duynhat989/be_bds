@@ -60,4 +60,4 @@ const Pay = sequelize.define(
         },
     }
 );
-module.exports = { Pay };
+module.exports = { Pay,PAY_STATUS };

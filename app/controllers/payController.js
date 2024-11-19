@@ -1,19 +1,33 @@
-const { Pay, User, Package } = require('../models'); // Đảm bảo rằng bạn đã export model Pay
+const { Pay, User, Package, PAY_STATUS,STATUS } = require('../models'); // Đảm bảo rằng bạn đã export model Pay
 // Tìm bản ghi theo invoice_code
 exports.pays = async (req, res) => {
     try {
-        const { page = 1, limit = 10 } = req.query;
-        const offset = parseInt(page - 1) * parseInt(limit) 
+        const { page = 1, limit = 10,user_id = 0 } = req.query;
+
+        const offset = parseInt(page - 1) * parseInt(limit)
+        let condition = {}
+        const role = req.user.role
+        if (role != 1) {
+            condition.status = STATUS.ON
+        }
+        if (user_id != 0) {
+            condition.user_id = user_id
+        }
+
+
         let count = await Pay.count({
-            where: {
-                status: 1
-            },
+            where: condition
         });
         let pays = await Pay.findAll({
-            where: {
-                status: 1
-            },
-            attributes: ["id", "user_id", "package_id", "extension_period", "must_pay", "invoice_code", "status_pay", "status"],
+            where: condition,
+            attributes: ["id"
+                , "user_id"
+                , "package_id"
+                , "extension_period"
+                , "must_pay"
+                , "invoice_code"
+                , "status_pay"
+                , "status"],
             limit: parseInt(limit),
             offset: offset
         });
@@ -21,10 +35,10 @@ exports.pays = async (req, res) => {
         for (let index = 0; index < pays.length; index++) {
             const pay = pays[index];
             let user = await User.findOne({
-                where:{
-                    id:pay.user_id
+                where: {
+                    id: pay.user_id
                 },
-                attributes:["id","name","email","phone","role"]
+                attributes: ["id", "name", "email", "phone", "role"]
             })
             let package = await Package.findByPk(pay.package_id)
             paysInfo.push({
@@ -44,6 +58,52 @@ exports.pays = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+exports.findById = async (req, res) => {
+    const { page = 1, limit = 10 } = req.query;
+    const {  user_id = 0, pay_status = 0 } = req.body
+    const offset = parseInt(page - 1) * parseInt(limit)
+    const role = req.user.role
+    let condition = {}
+    if (role != 1) {
+        condition.status = STATUS.ON
+    }
+    if (user_id != 0) {
+        condition.user_id = user_id
+    }
+    if (pay_status != 0) {
+        condition.status_pay = pay_status
+        // HOLD: 1,
+        // PAID: 2,
+        // CANCELED: 3
+    }
+    console.log(condition)
+    // ---------------------
+    let totalMustPay = await Pay.sum('must_pay', {
+        where: condition
+    });
+    totalMustPay = !totalMustPay ? 0 : totalMustPay
+    let count = await Pay.count({
+        where: condition
+    });
+    let pays = await Pay.findAll({
+        where: condition,
+        attributes: ["id"
+            , "user_id"
+            , "package_id"
+            , "extension_period"
+            , "must_pay"
+            , "invoice_code"
+            , "status_pay"
+            , "status"],
+        limit: parseInt(limit),
+        offset: offset
+    });
+    return res.json({
+        count,
+        total:totalMustPay,
+        pays
+    });
+}
 // Tìm bản ghi theo invoice_code
 exports.findByInvoiceCode = async (req, res) => {
     try {
@@ -82,32 +142,23 @@ exports.createPay = async (req, res) => {
 };
 
 
-// // Cập nhật thông tin Pay theo invoice_code
-// exports.updatePay = async (req, res) => {
-//     try {
-//         const { user_id, package_id, extension_period, must_pay, status_pay, invoice_code, status } = req.body;
-
-//         const pay = await Pay.findOne({ where: { invoice_code } });
-
-//         if (!pay) {
-//             return res.status(404).json({ success: false, message: 'Invoice code không tồn tại.' });
-//         }
-
-//         // Cập nhật thông tin
-//         await pay.update({
-//             user_id,
-//             package_id,
-//             extension_period,
-//             must_pay,
-//             status_pay,
-//             status
-//         });
-
-//         res.status(200).json({ success: true, data: pay });
-//     } catch (error) {
-//         res.status(500).json({ success: false, message: error.message });
-//     }
-// };
+// Cập nhật thông tin Pay theo invoice_code
+exports.users = async (req, res) => {
+    try {        
+        // Phần tìm kiếm theo tên 
+        const users = await User.findAll({
+            where: {},
+            attributes: ['id', 'name']
+        });
+        res.status(200).json({
+            success: true,
+            message: `Succesfuly`,
+            data: users
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
 
 // Xóa Pay theo invoice_code
 exports.deletePay = async (req, res) => {
