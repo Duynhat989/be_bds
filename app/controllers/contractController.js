@@ -39,7 +39,7 @@ exports.contracts = async (req, res) => {
         let wge = {
             status: 1
         }
-        if (search.length > 2) {
+        if (search && search.length > 2) {
             wge.name = {
                 [Op.like]: `%${search}%`
             }

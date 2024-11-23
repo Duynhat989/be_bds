@@ -15,7 +15,7 @@ exports.getAllAssistant = async (req, res) => {
         if(role != 1){
             wge.status = STATUS.ON
         }
-        if (search.length > 2) {
+        if (search && search.length > 2) {
             wge.name = {
                 [Op.like]: `%${search}%`
             }

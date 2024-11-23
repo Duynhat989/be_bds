@@ -86,36 +86,44 @@ class Assistaint {
         return messages
     }
     chat = async (assistant_id, thread_id, sendMessage) => {
-        const stream = await this.openai.beta.threads.runs.create(
-            thread_id,
-            { assistant_id: assistant_id, stream: true }
-        );
-        let str = ""
-        let timeout = null
+        try {
+            const stream = await this.openai.beta.threads.runs.create(
+                thread_id,
+                { assistant_id: assistant_id, stream: true }
+            );
+            let str = ""
+            let timeout = null
 
-        for await (const event of stream) {
-            // Hoạn thiên data
-            if(event.event == "thread.message.delta"){
-                str += event.data.delta.content[0].text.value
-                if(!timeout){
-                    timeout = setTimeout(async ()=>{
-                        await sendMessage({
-                            completed: false,
-                            full: str
-                        });
-                        timeout = null
-                    })
+            for await (const event of stream) {
+                // Hoạn thiên data
+                if (event.event == "thread.message.delta") {
+                    str += event.data.delta.content[0].text.value
+                    if (!timeout) {
+                        timeout = setTimeout(async () => {
+                            await sendMessage({
+                                completed: false,
+                                full: str
+                            });
+                            timeout = null
+                        })
+                    }
                 }
+                if (event.event == "thread.run.completed") {
+                    await sendMessage({
+                        completed: true,
+                        full: str
+                    });
+                }
+                // console.log(str)
             }
-            if(event.event == "thread.run.completed"){
-                await sendMessage({
-                    completed: true,
-                    full: str
-                });
-            }
-            // console.log(str)
+            return true;
+        } catch (error) {
+            await sendMessage({
+                completed: true,
+                full: "Đã xảy ra lỗi!"
+            });
+            return true;
         }
-        return true;
     };
     generateRandomMD5() {
         // Lấy thời gian hiện tại

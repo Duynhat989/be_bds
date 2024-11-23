@@ -10,7 +10,7 @@ exports.users = async (req, res) => {
         const role = req.user.role
         // Phần tìm kiếm theo tên 
         let wge = {}
-        if (search.length > 2) {
+        if (search && search.length > 2) {
             wge.name = {
                 [Op.like]: `%${search}%`
             }

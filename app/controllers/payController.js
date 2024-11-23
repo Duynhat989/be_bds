@@ -10,7 +10,7 @@ exports.pays = async (req, res) => {
         if (role != 1) {
             condition.status = STATUS.ON
         }
-        if (user_id != 0) {
+        if (user_id && user_id != 0) {
             condition.user_id = user_id
         }
 

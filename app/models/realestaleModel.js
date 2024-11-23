@@ -19,8 +19,8 @@ const RealEstate = sequelize.define(
       allowNull: false,
     },
     price: {
-      type: DataTypes.STRING, //Mức giá
-      allowNull: true,
+      type: DataTypes.TEXT, //Mức giá
+      allowNull: true, //mảng giá ['123.ty']
     },
     area: {
       type: DataTypes.STRING, //Diện tích
@@ -37,11 +37,12 @@ const RealEstate = sequelize.define(
     type: {
       type: DataTypes.STRING, //mua hoặc thuê
       allowNull: true,
-      defaultValue:"buy" //rent
+      defaultValue:"buy" //rent 
     },
-    base_url: {
-      type: DataTypes.STRING, //Đường dẫn gốc
-      allowNull: false,
+    province: {
+      type: DataTypes.STRING, //Vị trí địa lý
+      allowNull: true,
+      defaultValue:""
     },
     keyword: {
       type: DataTypes.TEXT('long'), //Đường dẫn gốc
@@ -49,6 +50,10 @@ const RealEstate = sequelize.define(
     },
     image: {
       type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    base_url: {
+      type: DataTypes.STRING, //Đường dẫn gốc
       allowNull: false,
     },
     status: {

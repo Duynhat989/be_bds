@@ -1,24 +1,38 @@
 const { STATUS, RealEstate } = require("../models");
 const { Sequelize, Op } = require('sequelize');
-const removeDiacritics = require('remove-diacritics');  
+const removeDiacritics = require('remove-diacritics');
 
 // Lấy danh sách tất cả các RealEstate có status = 1
 exports.getAllRealEstates = async (req, res) => {
     try {
-        const { page = 1, limit = 10, search = '' } = req.query;
+        const { page = 1, limit = 10, search = '',province='',type = '' } = req.query;
         const offset = parseInt(page - 1) * parseInt(limit);
-        
+        // 
         // Phần tìm kiếm theo tên 
         let wge = {
             status: STATUS.ON
         };
-
+        if (search && search.length > 2) {
+            wge.name = {
+                [Op.like]: `%${search}%`
+            }
+        }
+        if(province && province.length > 0){
+            wge.province = {
+                [Op.like]: `%${province}%`
+            }
+        }
+        if(type && type.length > 0){
+            wge.type = {
+                [Op.like]: `%${type}%`
+            }
+        }
         if (search.length > 0) {
             // Tách các từ trong chuỗi `search`
             const normalizedSearch = removeDiacritics(search.trim().toLowerCase());
             const keywords = normalizedSearch.split(' ').filter(word => word.length > 0);
             // const keywords = search.split(' ').filter(word => word.length > 0);
-            
+
             const andConditions = [];
             for (const word of keywords) {
                 const isNumber = /^\d+$/.test(word);
@@ -39,7 +53,7 @@ exports.getAllRealEstates = async (req, res) => {
 
         let realEstates = await RealEstate.findAll({
             where: wge,
-            limit: parseInt(limit), 
+            limit: parseInt(limit),
             offset: offset
         });
 
@@ -74,6 +88,7 @@ exports.findRealEstateById = async (req, res) => {
                 price: realEstate.price,
                 area: realEstate.area,
                 location: realEstate.location,
+                province: realEstate.province,
                 exten: realEstate.exten,
                 type: realEstate.type,
                 base_url: realEstate.base_url,
@@ -91,15 +106,54 @@ exports.findRealEstateByUrl = async (req, res) => {
 
         // Tìm RealEstate theo ID
         const realEstate = await RealEstate.findOne({
-            where:{
-                base_url:base_url
+            where: {
+                base_url: base_url
             }
         });
-        if (!realEstate) {
-            return res.json({ success: false });
+        if (realEstate) {
+            return res.json(
+                {
+                    success: true,
+                    data: {
+                        id: realEstate.id,
+                        price: realEstate.price,
+                        updatedAt: realEstate.updatedAt
+                    }
+                }
+            );
         }
-        else{
-            return res.json({ success: true });
+        else {
+            return res.json({
+                success: false,
+                msg: "Not found"
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+exports.province = async (req, res) => {
+    try {
+        const {  } = req.body;
+
+        // Tìm RealEstate theo ID
+        const provinces = await RealEstate.findAll({
+            attributes: ['province'],
+            group: ['province'],
+        });
+        if (provinces) {
+            return res.json(
+                {
+                    success: true,
+                    data: provinces
+                }
+            );
+        }
+        else {
+            return res.json({
+                success: false,
+                msg: "Not found"
+            });
         }
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -108,7 +162,17 @@ exports.findRealEstateByUrl = async (req, res) => {
 
 exports.createRealEstate = async (req, res) => {
     try {
-        const { title, description, price, area, location, exten,type, base_url,keyword, image } = req.body;
+        const { title,
+            description,
+            price,
+            area,
+            location,
+            exten,
+            province,
+            type,
+            base_url,
+            keyword,
+            image } = req.body;
 
         // Tạo RealEstate mới
         const newRealEstate = await RealEstate.create({
@@ -118,7 +182,8 @@ exports.createRealEstate = async (req, res) => {
             area,
             location,
             exten,
-            type:type ? type : "buy",
+            province,
+            type: type ? type : "buy",
             base_url,
             keyword,
             image
@@ -136,7 +201,18 @@ exports.createRealEstate = async (req, res) => {
 
 exports.editRealEstate = async (req, res) => {
     try {
-        const { id, title, description, price, area, location, exten,type, base_url,keyword, image } = req.body;
+        const { id,
+            title,
+            description,
+            price,
+            area,
+            location,
+            province,
+            exten,
+            type,
+            base_url,
+            keyword,
+            image } = req.body;
 
         // Tìm RealEstate theo ID
         const realEstate = await RealEstate.findByPk(id);
@@ -150,6 +226,7 @@ exports.editRealEstate = async (req, res) => {
         realEstate.price = price || realEstate.price;
         realEstate.area = area || realEstate.area;
         realEstate.location = location || realEstate.location;
+        realEstate.province = province || realEstate.province;
         realEstate.exten = exten || realEstate.exten;
         realEstate.type = type || realEstate.type;
         realEstate.base_url = base_url || realEstate.base_url;
@@ -172,16 +249,13 @@ exports.editRealEstate = async (req, res) => {
 exports.deleteRealEstate = async (req, res) => {
     try {
         const { id } = req.body;
-
         // Tìm RealEstate theo ID
         const realEstate = await RealEstate.findByPk(id);
         if (!realEstate) {
             return res.status(404).json({ success: false, message: "RealEstate not found" });
         }
-
         // Xóa RealEstate
         await realEstate.destroy();
-
         res.status(200).json({
             success: true,
             message: "RealEstate deleted successfully"
