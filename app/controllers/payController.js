@@ -153,7 +153,7 @@ exports.createPay = async (req, res) => {
 // Cập nhật thông tin Pay theo invoice_code
 exports.users = async (req, res) => {
     try {
-        const { search } = req.body
+        const { search } = req.query
         let condition = {}
         if (search && search.length > 0) {
             condition = {
