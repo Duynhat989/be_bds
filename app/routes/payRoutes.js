@@ -7,7 +7,7 @@ const auth = require('../middlewares/authMiddleware.js');
 // Xem tất cả khóa học
 router.get("/pays", auth([1, 3]), payController.pays);
 // Tìm theo ID
-router.post("/pay/find", auth([1]),validate(['user_id']), payController.findById);
+router.post("/pay/find", auth([1]), payController.findById);
 // // Tìm theo tên
 router.post("/pay/findId", auth([1]),validate(['id']), payController.findByIdUpdate);
 
