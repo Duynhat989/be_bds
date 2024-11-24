@@ -67,6 +67,50 @@ exports.pays = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+exports.findById = async (req, res) => {
+    const { page = 1, limit = 10, status_pay, startday, endday } = req.query;
+    const offset = parseInt(page - 1) * parseInt(limit)
+    let condition = {}
+    if (status_pay || status_pay == 0) {
+        condition.status_pay = status_pay
+    }
+    if (startday || endday) {
+        condition.updatedAt = {};
+        if (startday) {
+            condition.updatedAt[Op.gte] = new Date(startday); // Lớn hơn hoặc bằng ngày bắt đầu
+        }
+        if (endday) {
+            condition.updatedAt[Op.lte] = new Date(endday); // Nhỏ hơn hoặc bằng ngày kết thúc
+        }
+    }
+    let totalMustPay = await Pay.sum('must_pay', {
+        where: condition
+    });
+    totalMustPay = !totalMustPay ? 0 : totalMustPay
+    let count = await Pay.count({
+        where: condition
+    });
+    let pays = await Pay.findAll({
+        where: condition,
+        attributes: ["id"
+            , "user_id"
+            , "package_id"
+            , "extension_period"
+            , "must_pay"
+            , "invoice_code"
+            , "status_pay"
+            , "status"],
+        limit: parseInt(limit),
+        offset: offset
+    });
+    return res.json({
+        count,
+        total: totalMustPay,
+        pays,
+        page: page,
+        limit: limit
+    });
+}
 exports.findByIdUpdate = async (req, res) => {
     try {
         const { id } = req.body
