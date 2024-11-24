@@ -132,7 +132,7 @@ exports.findByInvoiceCode = async (req, res) => {
 // Tạo mới một bản ghi Pay
 exports.createPay = async (req, res) => {
     try {
-        const { package_id, extension_period, must_pay, message_code } = req.body;
+        const { package_id, extension_period, must_pay, message_code, invoice_code } = req.body;
         const user_id = req.user.id
         const newPay = await Pay.create({
             user_id,
@@ -140,6 +140,7 @@ exports.createPay = async (req, res) => {
             extension_period,
             must_pay,
             message_code,
+            invoice_code
         });
 
         res.status(201).json({ success: true, data: newPay });

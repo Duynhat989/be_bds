@@ -22,11 +22,11 @@ router.delete("/pay/delete", auth([1]),validate(['id']), payController.deletePay
 // CẬP NHẬT VÀ KIỂM TRA HÓA DƠN
 
 
-router.get("/pay/update", auth([1]), payController.EditInvoice);
+router.post("/pay/update", auth([1]), payController.EditInvoice);
 
-router.get("/pay/confirmInvoice", auth([1]), payController.updateInvoice);
+router.post("/pay/confirmInvoice", auth([1]), payController.updateInvoice);
 
-router.get("/pay/checkInvoice", auth([1]), payController.checkInvoiceStatus);
+router.post("/pay/checkInvoice", auth([1]), payController.checkInvoiceStatus);
 
 
 module.exports = router;
