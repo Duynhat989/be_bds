@@ -69,11 +69,11 @@ exports.pays = async (req, res) => {
 };
 exports.findById = async (req, res) => {
     try {
-        const { page = 1, limit = 10, status_pay, startday, endday, user_id } = req.query;
+        const { page = 1, limit = 10, pay_status, startday, endday, user_id } = req.query;
         const offset = parseInt(page - 1) * parseInt(limit)
         let condition = {}
-        if (status_pay || status_pay == 0) {
-            condition.status_pay = status_pay
+        if (pay_status || pay_status == 0) {
+            condition.status_pay = pay_status
         }
         if (user_id) {
             condition.user_id = user_id
