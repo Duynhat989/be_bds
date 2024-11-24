@@ -9,6 +9,8 @@ router.get("/pays", auth([1, 3]), payController.pays);
 // Tìm theo ID
 router.post("/pay/find", auth([1]),validate(['user_id']), payController.findById);
 // // Tìm theo tên
+router.post("/pay/findId", auth([1]),validate(['id']), payController.findByIdUpdate);
+
 // // Tạo trợ lý
 router.post("/pay/create", auth([1,3]), payController.createPay);
 // // Cập nhật trợ lý
