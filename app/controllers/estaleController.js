@@ -140,6 +140,10 @@ exports.province = async (req, res) => {
         const provinces = await RealEstate.findAll({
             attributes: ['province'],
             group: ['province'],
+            where: Sequelize.where(
+                Sequelize.literal(`LENGTH(province) - LENGTH(REPLACE(province, ' ', '')) + 1`),
+                { [Sequelize.Op.lt]: 3 } // Điều kiện: số từ ít hơn 3
+            )
         });
         if (provinces) {
             return res.json(
@@ -161,6 +165,7 @@ exports.province = async (req, res) => {
 };
 
 exports.createRealEstate = async (req, res) => {
+    
     try {
         const { title,
             description,
@@ -173,7 +178,7 @@ exports.createRealEstate = async (req, res) => {
             base_url,
             keyword,
             image } = req.body;
-
+    
         // Tạo RealEstate mới
         const newRealEstate = await RealEstate.create({
             title,
@@ -188,7 +193,7 @@ exports.createRealEstate = async (req, res) => {
             keyword,
             image
         });
-
+    
         res.status(200).json({
             success: true,
             message: "RealEstate created successfully",

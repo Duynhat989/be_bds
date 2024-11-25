@@ -31,7 +31,7 @@ const RealEstate = sequelize.define(
       allowNull: true,
     },
     exten: {
-      type: DataTypes.STRING, //Tiện ích
+      type: DataTypes.TEXT, //Tiện ích
       allowNull: true,
     },
     type: {
