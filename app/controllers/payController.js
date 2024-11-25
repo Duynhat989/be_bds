@@ -72,7 +72,7 @@ exports.findById = async (req, res) => {
         const { page = 1, limit = 10, pay_status, startday, endday, user_id } = req.query;
         const offset = parseInt(page - 1) * parseInt(limit)
         let condition = {}
-        if (pay_status && pay_status == 0) {
+        if (pay_status && pay_status != '') {
             condition.status_pay = pay_status
         }
         if (user_id) {
@@ -95,6 +95,7 @@ exports.findById = async (req, res) => {
             where: condition
         });
         let pays = await Pay.findAll({
+            where: condition,
             attributes: ["id"
                 , "user_id"
                 , "package_id"
