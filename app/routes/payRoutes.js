@@ -26,6 +26,8 @@ router.delete("/pay/delete", auth([1]),validate(['id']), payController.deletePay
 
 router.post("/pay/update", auth([1]), payController.EditInvoice);
 
+
+// Chạy API bank
 router.post("/pay/confirmInvoice", auth([1]), payController.updateInvoice);
 
 router.post("/pay/checkInvoice", auth([1]), payController.checkInvoiceStatus);

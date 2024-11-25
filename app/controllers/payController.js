@@ -8,10 +8,10 @@ exports.pays = async (req, res) => {
 
         const offset = parseInt(page - 1) * parseInt(limit)
         let condition = {}
-        if (status_pay && status_pay == 0) {
+        if (status_pay && status_pay != '') {
             condition.status_pay = status_pay
         }
-        if (startday || endday) {
+        if (startday && endday) {
             condition.updatedAt = {};
             if (startday) {
                 condition.updatedAt[Op.gte] = new Date(startday); // Lớn hơn hoặc bằng ngày bắt đầu
