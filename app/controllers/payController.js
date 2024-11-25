@@ -4,12 +4,15 @@ const { Sequelize, Op } = require('sequelize');
 // Tìm bản ghi theo invoice_code
 exports.pays = async (req, res) => {
     try {
-        const { page = 1, limit = 10, status_pay, startday, endday } = req.query;
+        const { page = 1, limit = 10, status_pay, startday, endday,user_id } = req.query;
 
         const offset = parseInt(page - 1) * parseInt(limit)
         let condition = {}
         if (status_pay && status_pay != '') {
             condition.status_pay = status_pay
+        }
+        if (user_id) {
+            condition.user_id = user_id
         }
         if (startday && endday) {
             condition.updatedAt = {};
