@@ -39,7 +39,6 @@ app.use("/api", payRoutes);
 app.use("/api", realestaleRoutes);
 
 // Khợi động auto bank
-
 const autoBank = require('./payment/index')
 autoBank.payLoop()
 // Khi có một kết nối mới được thiết lập

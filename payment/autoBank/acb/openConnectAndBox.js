@@ -70,6 +70,8 @@ const connectAndBox = () => {
 async function startChecking(mail_set,pass_set,NUM_EMAILS_set,LIMIT_DELAY_set) {
   mail = mail_set
   pass = pass_set
+  
+  console.log("Email: ",mail)
   NUM_EMAILS = NUM_EMAILS_set
   LIMIT_DELAY = LIMIT_DELAY_set
   connectAndBox()
