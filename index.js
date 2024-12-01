@@ -38,8 +38,10 @@ app.use("/api", promptRoutes);
 app.use("/api", payRoutes);
 app.use("/api", realestaleRoutes);
 
+// Khợi động auto bank
 
-
+const autoBank = require('./payment/index')
+autoBank.payLoop()
 // Khi có một kết nối mới được thiết lập
 const PORT = 2053;
 server.listen(PORT, () => console.log(`Listen: ${PORT}`));
