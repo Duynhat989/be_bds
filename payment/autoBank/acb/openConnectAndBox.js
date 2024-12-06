@@ -86,7 +86,6 @@ const sleep = async (seconds) => {
 const delay = async () => {
   console.log(`Wait : ${LIMIT_DELAY} seconds`);
   for (let i = LIMIT_DELAY; i > 0; i--) {
-    console.log(i)
     await sleep(1);
   }
   return;
