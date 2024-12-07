@@ -11,9 +11,12 @@ exports.users = async (req, res) => {
         // Phần tìm kiếm theo tên 
         let wge = {}
         if (search && search.length > 2) {
-            wge.name = {
-                [Op.like]: `%${search}%`
-            }
+            wge = {
+                [Op.or]: [
+                    { name: { [Op.like]: `%${search}%` } },
+                    { email: { [Op.like]: `%${search}%` } }
+                ]
+            };
         }
         let count = await User.count({
             where: wge,
