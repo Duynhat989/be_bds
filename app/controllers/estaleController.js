@@ -241,6 +241,7 @@ exports.createRealEstate = async (req, res) => {
             price,
             priceNumber,
             area,
+            areaNumber,
             location,
             exten,
             province,
@@ -256,6 +257,7 @@ exports.createRealEstate = async (req, res) => {
             price,
             priceNumber,
             area,
+            areaNumber,
             location,
             exten,
             province,
@@ -283,6 +285,7 @@ exports.editRealEstate = async (req, res) => {
             price,
             priceNumber,
             area,
+            areaNumber,
             location,
             province,
             exten,
@@ -303,6 +306,7 @@ exports.editRealEstate = async (req, res) => {
         realEstate.price = price || realEstate.price;
         realEstate.priceNumber = priceNumber || realEstate.priceNumber;
         realEstate.area = area || realEstate.area;
+        realEstate.areaNumber = areaNumber || realEstate.areaNumber;
         realEstate.location = location || realEstate.location;
         realEstate.province = province || realEstate.province;
         realEstate.exten = exten || realEstate.exten;

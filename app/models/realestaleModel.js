@@ -30,6 +30,10 @@ const RealEstate = sequelize.define(
       type: DataTypes.STRING, //Diện tích
       allowNull: true,
     },
+    areaNumber: {
+      type: DataTypes.FLOAT, //Diện tích
+      allowNull: true,
+    },
     location: {
       type: DataTypes.STRING, //Vị trí
       allowNull: true,
