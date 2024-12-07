@@ -22,6 +22,10 @@ const RealEstate = sequelize.define(
       type: DataTypes.TEXT, //Mức giá
       allowNull: true, //mảng giá ['123.ty']
     },
+    priceNumber: {
+      type: DataTypes.INTEGER, //Mức giá
+      allowNull: true, //mảng giá ['123.ty']
+    },
     area: {
       type: DataTypes.STRING, //Diện tích
       allowNull: true,

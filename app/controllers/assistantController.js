@@ -1,18 +1,18 @@
-const { STATUS, Assistant, loadApiKey, loadModel, astCreateRow, findAssistant, astUpdateRow } = require("../models");
+const { STATUS, Assistant, loadApiKey, loadModel, astCreateRow, findAssistant, astUpdateRow,RealEstate } = require("../models");
 const { encryption, compare } = require('../utils/encode');
-const { Assistaint } = require('../modules/assistaint.module')
+const { AssistaintModule } = require('../modules/assistaint.module')
 const { Sequelize, Op } = require('sequelize');
 
 // Lấy danh sách tất cả học sinh
 exports.getAllAssistant = async (req, res) => {
     try {
         const { page = 1, limit = 10, search = '' } = req.query;
-        const offset = parseInt(page - 1) * parseInt(limit) 
+        const offset = parseInt(page - 1) * parseInt(limit)
 
         const role = req.user.role
         // Phần tìm kiếm theo tên 
         let wge = {}
-        if(role != 1){
+        if (role != 1) {
             wge.status = STATUS.ON
         }
         if (search && search.length > 2) {
@@ -26,17 +26,17 @@ exports.getAllAssistant = async (req, res) => {
         });
         const data = await Assistant.findAll({
             where: wge,
-            attributes: ['id', 'name', 'detail', 'image', 'suggests','view'],
-            limit: parseInt(limit), 
+            attributes: ['id', 'name', 'detail', 'image', 'suggests', 'view'],
+            limit: parseInt(limit),
             offset: offset
         });
         res.status(200).json({
             success: true,
             message: `List Assistant`,
             data: data,
-            total:count,
-            page:page,
-            limit:limit
+            total: count,
+            page: page,
+            limit: limit
         });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -56,9 +56,9 @@ exports.createAssistant = async (req, res) => {
             return
         }
 
-        var module = new Assistaint(OPENAI_API_KEY)
+        var module = new AssistaintModule(OPENAI_API_KEY)
         let vector_id = await module.createVector(file_ids)
-        if(vector_id.includes("vector_")){
+        if (vector_id.includes("vector_")) {
             module.delVectorName(vector_id)
             res.status(500).json({
                 success: false, error: 'No data file found.'
@@ -70,12 +70,12 @@ exports.createAssistant = async (req, res) => {
         console.log(file_ids)
         // Mình cần lưu vào
         var resRow = await astCreateRow(
-            name, detail, image, 
-            instructions, 
-            vector_id, 
-            JSON.stringify(file_ids), 
-            assistant.id, 
-            JSON.stringify(assistant), 
+            name, detail, image,
+            instructions,
+            vector_id,
+            JSON.stringify(file_ids),
+            assistant.id,
+            JSON.stringify(assistant),
             JSON.stringify(suggests),
             name_model
         )
@@ -89,7 +89,7 @@ exports.createAssistant = async (req, res) => {
 };
 exports.updateAssistant = async (req, res) => {
     try {
-        const { name, detail, image, instructions, file_ids, suggests,name_model, id } = req.body
+        const { name, detail, image, instructions, file_ids, suggests, name_model, id } = req.body
         // Lấy api key
         let OPENAI_API_KEY = await loadApiKey()
         if (OPENAI_API_KEY.length < 10) {
@@ -99,7 +99,7 @@ exports.updateAssistant = async (req, res) => {
             return
         }
 
-        var module = new Assistaint(OPENAI_API_KEY)
+        var module = new AssistaintModule(OPENAI_API_KEY)
         let assistant_old = await findAssistant(id)
         if (!assistant_old) {
             // Không tìm thấy đối tượng
@@ -176,13 +176,13 @@ exports.find = async (req, res) => {
             return res.status(404).json({ success: false, message: "Assistant not found" });
         }
         // Tìm kiếm trợ lý
-        if(req.user.role == 1){
+        if (req.user.role == 1) {
             res.status(200).json({
                 success: true,
                 message: `Find success.`,
                 data: assistant
             });
-        }else{
+        } else {
             res.status(200).json({
                 success: true,
                 message: `Find success.`,
@@ -212,7 +212,7 @@ exports.delete = async (req, res) => {
             });
             return
         }
-        var module = new Assistaint(OPENAI_API_KEY)
+        var module = new AssistaintModule(OPENAI_API_KEY)
         // Tìm khóa học theo ID
         const assistant = await Assistant.findByPk(id);
         if (!assistant) {
@@ -222,7 +222,7 @@ exports.delete = async (req, res) => {
         const old_file_ids = JSON.parse(assistant.file_ids)
         for (let index = 0; index < old_file_ids.length; index++) {
             const element = old_file_ids[index];
-            try { await module.delFile(element) } catch (error) {  }
+            try { await module.delFile(element) } catch (error) { }
         }
         // Xóa vector cũ
         // console.log('del vector')
@@ -237,3 +237,36 @@ exports.delete = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+
+//gợi ý tìm kiếm
+exports.suggest = async (req, res) => {
+    try {
+        const { search } = req.body;
+
+        // Tìm RealEstate theo ID
+        const locations = await Assistant.findAll({
+            attributes: ['id','name','assistant_id'],
+            where: {
+                name:{
+                    [Op.like]: `%${search}%`
+                }
+            }
+        });
+        if (locations) {
+            return res.json(
+                {
+                    success: true,
+                    data: locations
+                }
+            );
+        }
+        else {
+            return res.json({
+                success: false,
+                msg: "Not found"
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+}

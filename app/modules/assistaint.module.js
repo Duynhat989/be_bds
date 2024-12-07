@@ -2,7 +2,7 @@ const OpenAI = require("openai");
 const crypto = require('crypto');
 
 
-class Assistaint {
+class AssistaintModule {
     constructor(myKey) {
         this.myKey = myKey
         this.openai = new OpenAI({ apiKey: this.myKey });
@@ -138,5 +138,5 @@ class Assistaint {
     }
 }
 module.exports = {
-    Assistaint
+    AssistaintModule
 }

@@ -9,6 +9,7 @@ router.post('/register',  validate(['name','email','phone','password']), authCon
 // Đăng nhập
 router.post('/login',  validate(['email', 'password']), authController.login);
 
-// Admin và giáo viên tạo tài khoản
+// Quên tài khoản
+// router.post("/auth/forget", auth([1,3]), authController.forget); 
 
 module.exports = router;

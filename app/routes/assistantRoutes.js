@@ -14,6 +14,8 @@ router.post("/assistant/update", auth([1]),validate(['name','detail','instructio
 // Tìm kiếm trợ lý
 router.post("/assistant/find", auth([1,3]),validate(['id']), assistantController.find);
 
+// Gợi ý trợ lý
+router.post("/assistant/suggest", auth([1,3]),validate(['search']), assistantController.suggest);
 // Xóa trợ lý
 router.delete("/assistant/delete", auth([1]),validate(['id']), assistantController.delete);
 

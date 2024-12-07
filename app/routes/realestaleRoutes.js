@@ -19,5 +19,9 @@ router.post("/estale/update", auth([1]),validate(['id']), estaleController.editR
 router.delete("/estale/delete", auth([1]),validate(['id']), estaleController.deleteRealEstate);
 
 router.get("/estale/province", auth([1,3]), estaleController.province);
+//danh sách gợi ý
+router.get("/estale/location", auth([1,3]), estaleController.location);
+//danh sách gợi ý
+router.get("/estale/name", auth([1,3]), estaleController.nameEsal);
 // Tạo trợ lý
 module.exports = router;

@@ -11,7 +11,7 @@ const {
     License, Day, Package
 } = require("../models");
 const { encryption, compare } = require('../utils/encode');
-const { Assistaint } = require('../modules/assistaint.module')
+const { AssistaintModule } = require('../modules/assistaint.module')
 const { Gpt } = require('../modules/gpt.module')
 
 
@@ -34,7 +34,7 @@ exports.createThread = async (req, res) => {
             });
             return
         }
-        const module = new Assistaint(OPENAI_API_KEY)
+        const module = new AssistaintModule(OPENAI_API_KEY)
         let thread = await module.start()
         // Tìm kiếm assistant
         // console.log(assistant)
@@ -91,7 +91,7 @@ exports.createConversation = async (req, res) => {
             return
         }
 
-        const module = new Assistaint(OPENAI_API_KEY)
+        const module = new AssistaintModule(OPENAI_API_KEY)
         await module.addMessage(`thread_${thread_id}`, message)
         // create 
         res.setHeader('Content-Type', 'text/event-stream');

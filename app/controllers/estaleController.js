@@ -5,18 +5,13 @@ const removeDiacritics = require('remove-diacritics');
 // Lấy danh sách tất cả các RealEstate có status = 1
 exports.getAllRealEstates = async (req, res) => {
     try {
-        const { page = 1, limit = 10, search = '',province='',type = '' } = req.query;
+        const { page = 1, limit = 10, max_price, location, search = '',province='',type = '' } = req.query;
         const offset = parseInt(page - 1) * parseInt(limit);
         // 
         // Phần tìm kiếm theo tên 
         let wge = {
             status: STATUS.ON
         };
-        if (search && search.length > 2) {
-            wge.title = {
-                [Op.like]: `%${search}%`
-            }
-        }
         if(province && province.length > 0){
             wge.province = {
                 [Op.like]: `%${province}%`
@@ -27,19 +22,27 @@ exports.getAllRealEstates = async (req, res) => {
                 [Op.like]: `%${type}%`
             }
         }
-        if (search.length > 0) {
+        if(max_price && max_price > 0){
+            wge.priceNumber = {
+                ...wge.priceNumber, // Giữ lại các điều kiện hiện có, nếu có
+                [Op.lte]: max_price // Giá trị phải nhỏ hơn hoặc bằng `max_price`
+            };
+        }
+        if(location && location.length > 0){
+            wge.location = location
+        }
+        if (search && search.length > 0) {
             // Tách các từ trong chuỗi `search`
             const normalizedSearch = removeDiacritics(search.trim().toLowerCase());
             const keywords = normalizedSearch.split(' ').filter(word => word.length > 0);
             // const keywords = search.split(' ').filter(word => word.length > 0);
-
             const andConditions = [];
             for (const word of keywords) {
                 const isNumber = /^\d+$/.test(word);
                 console.log(word)
                 andConditions.push({
                     keyword: {
-                        [Op.like]: isNumber ? `% ${word}%` : `% ${word} %`
+                        [Op.like]: isNumber ? `%${word}%` : `%${word}%`
                     }
                 });
             }
@@ -163,13 +166,80 @@ exports.province = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+exports.location = async (req, res) => {
+    try {
+        const { location } = req.query;
 
+        // Tìm RealEstate theo ID
+        const locations = await RealEstate.findAll({
+            attributes: ['location'],
+            group: ['location'],
+            where: {
+                location:{
+                    [Op.like]: `%${location}%`
+                }
+            },
+            limit:1000
+        });
+        if (locations) {
+            return res.json(
+                {
+                    success: true,
+                    data: locations,
+                    quantity:locations.length
+                }
+            );
+        }
+        else {
+            return res.json({
+                success: false,
+                msg: "Not found"
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+exports.nameEsal = async (req, res) => {
+    try {
+        const { name } = req.query;
+
+        // Tìm RealEstate theo ID
+        const locations = await RealEstate.findAll({
+            attributes: ['title'],
+            where: {
+                title:{
+                    [Op.like]: `%${name}%`
+                }
+            },
+            limit:500
+        });
+        if (locations) {
+            return res.json(
+                {
+                    success: true,
+                    data: locations,
+                    quantity:locations.length
+                }
+            );
+        }
+        else {
+            return res.json({
+                success: false,
+                msg: "Not found"
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
 exports.createRealEstate = async (req, res) => {
     
     try {
         const { title,
             description,
             price,
+            priceNumber,
             area,
             location,
             exten,
@@ -184,6 +254,7 @@ exports.createRealEstate = async (req, res) => {
             title,
             description,
             price,
+            priceNumber,
             area,
             location,
             exten,
@@ -210,6 +281,7 @@ exports.editRealEstate = async (req, res) => {
             title,
             description,
             price,
+            priceNumber,
             area,
             location,
             province,
@@ -229,6 +301,7 @@ exports.editRealEstate = async (req, res) => {
         realEstate.title = title || realEstate.title;
         realEstate.description = description || realEstate.description;
         realEstate.price = price || realEstate.price;
+        realEstate.priceNumber = priceNumber || realEstate.priceNumber;
         realEstate.area = area || realEstate.area;
         realEstate.location = location || realEstate.location;
         realEstate.province = province || realEstate.province;
