@@ -4,7 +4,7 @@ const { Sequelize, Op } = require('sequelize');
 // Tìm bản ghi theo invoice_code
 exports.pays = async (req, res) => {
     try {
-        const { page = 1, limit = 10, status_pay, startday, endday,user_id } = req.query;
+        const { page = 1, limit = 10, status_pay, startday, endday, user_id } = req.query;
 
         const offset = parseInt(page - 1) * parseInt(limit)
         let condition = {}
@@ -39,6 +39,7 @@ exports.pays = async (req, res) => {
                 , "invoice_code"
                 , "status_pay"
                 , "status"],
+            order: [["createdAt", "DESC"]],
             limit: parseInt(limit),
             offset: offset
         });
