@@ -10,6 +10,8 @@ router.post('/register',  validate(['name','email','phone','password']), authCon
 router.post('/login',  validate(['email', 'password']), authController.login);
 
 // Quên tài khoản
-// router.post("/auth/forget", auth([1,3]), authController.forget); 
+router.post("/forget",   validate(['email']),authController.forget); 
 
+// Quên tài khoản
+router.post("/confirm",   validate(['code']),authController.confirm); 
 module.exports = router;
