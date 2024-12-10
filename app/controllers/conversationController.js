@@ -92,7 +92,7 @@ exports.createConversation = async (req, res) => {
         }
 
         const module = new AssistaintModule(OPENAI_API_KEY)
-        await module.addMessage(`thread_${thread_id}`, `Tôi không muốn bạn trả lời phần tìm kiếm file tải lên. Chỉ cần phản hồi đúng nội dung câu: ${message}`)
+        await module.addMessage(`thread_${thread_id}`, `Tôi không muốn bạn trả lời phần tìm kiếm file tải lên, không cần trả lời trạng thái tìm thấy hoặc không. Chỉ cần bổ sung thêm chi tiết, phản hồi đúng nội dung câu hỏi sau: ${message}`)
         // create 
         res.setHeader('Content-Type', 'text/event-stream');
         res.setHeader('Cache-Control', 'no-cache');
