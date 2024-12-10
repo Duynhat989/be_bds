@@ -97,7 +97,7 @@ exports.createConversation = async (req, res) => {
         res.setHeader('Content-Type', 'text/event-stream');
         res.setHeader('Cache-Control', 'no-cache');
         res.setHeader('Connection', 'keep-alive');
-        console.log("Xin chào")
+        // console.log("Xin chào")
         // Tin nhắn cũ
         const sendMessage = async (data) => {
             // console.log('---------------------------------------------')

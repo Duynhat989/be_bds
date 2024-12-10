@@ -1,4 +1,4 @@
-const { STATUS, Assistant, loadApiKey, loadModel, astCreateRow, findAssistant, astUpdateRow,RealEstate } = require("../models");
+const { STATUS, Assistant, loadApiKey, loadModel, astCreateRow, findAssistant, astUpdateRow, RealEstate } = require("../models");
 const { encryption, compare } = require('../utils/encode');
 const { AssistaintModule } = require('../modules/assistaint.module')
 const { Sequelize, Op } = require('sequelize');
@@ -109,7 +109,7 @@ exports.updateAssistant = async (req, res) => {
         if (JSON.stringify(file_ids) != assistant_old.file_ids) {
             // cập nhập nhật mới vector và assistant, xóa đi các bản cũ
             // Xóa đi các file cũ
-            console.log('del file_id')
+            // console.log('del file_id')
             const old_file_ids = JSON.parse(assistant_old.file_ids)
             for (let index = 0; index < old_file_ids.length; index++) {
                 const element = old_file_ids[index];
@@ -118,9 +118,13 @@ exports.updateAssistant = async (req, res) => {
                 }
             }
             // Xóa vector cũ
+            try {
+                const asset = await module.deleteAssistant(assistant_old.assistant_id)
+                console.log(asset)
+            } catch (error) {
+                console.log(error)
+            }
             await module.delVector(assistant_old.vector_id)
-
-
             // Tạo mới vector và assistant
             let vector_id = await module.createVector(file_ids)
             // vector đã tạo
@@ -137,6 +141,8 @@ exports.updateAssistant = async (req, res) => {
                 name_model,
                 assistant_old.id
             )
+            // Xóa trợ lý cũ
+
             // Danh sách trợ lý
             res.status(200).json({
                 success: true,
@@ -144,23 +150,53 @@ exports.updateAssistant = async (req, res) => {
                 data: resRow
             });
         } else {
-            var resRow = await astUpdateRow(
-                name, detail, image,
-                instructions,
-                assistant_old.vector_id,
-                assistant_old.file_ids,
-                assistant_old.assistant_old,
-                assistant_old.assistant,
-                JSON.stringify(suggests),
-                name_model,
-                assistant_old.id
-            )
-            // Danh sách trợ lý
-            res.status(200).json({
-                success: true,
-                message: `Update success old assistant`,
-                data: resRow
-            });
+            if (instructions != assistant_old.instructions) {
+                // xóa trợ lý cũ
+                try {
+                    const asset = await module.deleteAssistant(assistant_old.assistant_id)
+                    console.log(asset)
+                } catch (error) {
+                    console.log(error)
+                }
+                let assistant = await module.createAssistant(instructions, assistant_old.vector_id)
+                // Trợ lý mới đã được tạo 
+                var resRow = await astUpdateRow(
+                    name, detail, image,
+                    instructions,
+                    assistant_old.vector_id,
+                    assistant_old.file_ids,
+                    assistant.id,
+                    JSON.stringify(assistant),
+                    JSON.stringify(suggests),
+                    name_model,
+                    assistant_old.id
+                )
+                // Danh sách trợ lý
+                res.status(200).json({
+                    success: true,
+                    message: `Update success old assistant`,
+                    data: resRow
+                });
+            } else {
+                var resRow = await astUpdateRow(
+                    name, detail, image,
+                    instructions,
+                    assistant_old.vector_id,
+                    assistant_old.file_ids,
+                    assistant_old.assistant_old,
+                    assistant_old.assistant,
+                    JSON.stringify(suggests),
+                    name_model,
+                    assistant_old.id
+                )
+                // Danh sách trợ lý
+                res.status(200).json({
+                    success: true,
+                    message: `Update success old assistant`,
+                    data: resRow
+                });
+            }
+
         }
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -245,9 +281,9 @@ exports.suggest = async (req, res) => {
 
         // Tìm RealEstate theo ID
         const locations = await Assistant.findAll({
-            attributes: ['id','name','assistant_id'],
+            attributes: ['id', 'name', 'assistant_id'],
             where: {
-                name:{
+                name: {
                     [Op.like]: `%${search}%`
                 }
             }

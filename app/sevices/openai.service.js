@@ -25,7 +25,7 @@ const createAssistant = async (openai, handle, instructions, vectorStoreId) => {
     instructions: instructions,
     tools: [{ type: "file_search" }],
     tool_resources: { file_search: { vector_store_ids: [vectorStoreId] } },
-    model: "gpt-4o",
+    model: "gpt-4o-mini",
     top_p: 0.2,
     temperature: 0,
   });
@@ -62,7 +62,7 @@ const updateAssistant = async (openai, assistantId, instructions, name) => {
     instructions: instructions,
     name: name,
     tools: [{ type: "file_search" }],
-    model: "gpt-4o",
+    model: "gpt-4o-mini",
   });
 
   console.log(updatedAssistant);

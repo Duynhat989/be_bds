@@ -13,6 +13,14 @@ class AssistaintModule {
         return thread;
     };
     createAssistant = async (instructions, vectorStoreId, model) => {
+        // let lst = await this.listAssistant()
+        // console.log("lst",lst.data)
+        // for (let index = 0; index < lst.data.length; index++) {
+        //     const element = lst.data[index];
+        //     console.log(element)
+        //     await this.deleteAssistant(element.id)
+        // }
+
         let handle = await this.generateRandomMD5()
         // handle : đây là giá trị đặc trưng hoặc có thể là id của trợ lý
         const assistant = await this.openai.beta.assistants.create({
@@ -20,9 +28,9 @@ class AssistaintModule {
             instructions: instructions,
             tools: [{ type: "file_search" }],
             tool_resources: { file_search: { vector_store_ids: [vectorStoreId] } },
-            model: "gpt-4o",
-            top_p: 0.2,
-            temperature: 0,
+            model: "gpt-4o-mini",
+            top_p: 0.5,
+            temperature: 1.8,
         });
         return assistant
     };
