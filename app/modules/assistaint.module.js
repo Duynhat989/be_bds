@@ -101,7 +101,10 @@ class AssistaintModule {
             );
             let str = ""
             let timeout = null
-
+            function removePattern(messageText) {
+                const pattern = /【\d+†source】/g; // Định nghĩa pattern
+                return messageText.replace(pattern, ''); // Thay thế các phần khớp với pattern bằng chuỗi rỗng
+            }
             for await (const event of stream) {
                 // Hoạn thiên data
                 if (event.event == "thread.message.delta") {
@@ -110,7 +113,7 @@ class AssistaintModule {
                         timeout = setTimeout(async () => {
                             await sendMessage({
                                 completed: false,
-                                full: str
+                                full: removePattern(str)
                             });
                             timeout = null
                         })
@@ -119,7 +122,7 @@ class AssistaintModule {
                 if (event.event == "thread.run.completed") {
                     await sendMessage({
                         completed: true,
-                        full: str
+                        full: removePattern(str)
                     });
                 }
                 // console.log(str)
