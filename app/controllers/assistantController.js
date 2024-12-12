@@ -93,6 +93,7 @@ exports.createAssistant = async (req, res) => {
 };
 exports.updateAssistant = async (req, res) => {
     try {
+
         const { name, detail, image, instructions, file_ids, suggests, name_model, id } = req.body
         // Lấy api key
         let OPENAI_API_KEY = await loadApiKey()
