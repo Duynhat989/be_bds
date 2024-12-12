@@ -102,7 +102,7 @@ class AssistaintModule {
             let str = ""
             let timeout = null
             function removePattern(messageText) {
-                const pattern = /【\d+†source】/g; // Định nghĩa pattern
+                const pattern = /(?:【)?.+?†source】/g; // Định nghĩa pattern
                 return messageText.replace(pattern, ''); // Thay thế các phần khớp với pattern bằng chuỗi rỗng
             }
             for await (const event of stream) {
