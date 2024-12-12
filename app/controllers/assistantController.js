@@ -59,7 +59,11 @@ exports.createAssistant = async (req, res) => {
         var module = new AssistaintModule(OPENAI_API_KEY)
         let vector_id = await module.createVector(file_ids)
         if (vector_id.includes("vector_")) {
-            module.delVectorName(vector_id)
+            try {
+                module.delVectorName(vector_id)
+            } catch (error) {
+                console.log('Xóa lỗi VTER')
+            }
             res.status(500).json({
                 success: false, error: 'No data file found.'
             });
@@ -124,7 +128,11 @@ exports.updateAssistant = async (req, res) => {
             } catch (error) {
                 console.log(error)
             }
-            await module.delVector(assistant_old.vector_id)
+            try {
+                await module.delVector(assistant_old.vector_id)
+            } catch (error) {
+                console.log('Xóa vector lỗi')
+            }
             // Tạo mới vector và assistant
             let vector_id = await module.createVector(file_ids)
             // vector đã tạo
