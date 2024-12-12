@@ -29,8 +29,8 @@ class AssistaintModule {
             tools: [{ type: "file_search" }],
             tool_resources: { file_search: { vector_store_ids: [vectorStoreId] } },
             model: "gpt-4o-mini",
-            top_p: 0.5,
-            temperature: 1.8,
+            top_p: 0.3,
+            temperature: 0.9,
         });
         return assistant
     };
