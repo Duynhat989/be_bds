@@ -5,7 +5,7 @@ const removeDiacritics = require('remove-diacritics');
 // Lấy danh sách tất cả các RealEstate có status = 1
 exports.getAllRealEstates = async (req, res) => {
     try {
-        const { page = 1, limit = 10, max_price, location, search = '',province='',type = '' } = req.query;
+        const { page = 1, limit = 10, max_price,area, location, search = '',province='',type = '' } = req.query;
         const offset = parseInt(page - 1) * parseInt(limit);
         // 
         // Phần tìm kiếm theo tên 
@@ -26,6 +26,13 @@ exports.getAllRealEstates = async (req, res) => {
             wge.priceNumber = {
                 ...wge.priceNumber, // Giữ lại các điều kiện hiện có, nếu có
                 [Op.lte]: max_price // Giá trị phải nhỏ hơn hoặc bằng `max_price`
+            };
+        }
+        if(area && area.length > 0){
+            let min_area = area.split('-')[0]
+            let max_area = area.split('-')[1] || 100000
+            wge.areaNumber = {
+                [Op.between]: [min_area, max_area] // Giá trị phải nằm trong khoảng từ `min_price` đến `max_price`
             };
         }
         if(location && location.length > 0){
