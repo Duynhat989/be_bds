@@ -113,7 +113,7 @@ class AssistaintModule {
                         timeout = setTimeout(async () => {
                             await sendMessage({
                                 completed: false,
-                                full: removePattern(str)
+                                full: str
                             });
                             timeout = null
                         })
@@ -122,7 +122,7 @@ class AssistaintModule {
                 if (event.event == "thread.run.completed") {
                     await sendMessage({
                         completed: true,
-                        full: removePattern(str)
+                        full: str
                     });
                 }
                 // console.log(str)
