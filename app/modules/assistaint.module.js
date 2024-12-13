@@ -102,9 +102,19 @@ class AssistaintModule {
             let str = ""
             let timeout = null
             function removePattern(messageText) {
-                const pattern = /(?:【)?.+?†source】/g; // Định nghĩa pattern
-                return messageText.replace(pattern, ''); // Thay thế các phần khớp với pattern bằng chuỗi rỗng
+                // Handle null or undefined input
+                if (!messageText) return '';
+
+                // Match patterns like:
+                // 【4:0†source】
+                // 【1:2†source】
+                // Includes optional opening 【 and required closing 】
+                const pattern = /【?\d+:\d+†source】/g;
+
+                // Remove all matched patterns
+                return messageText.replace(pattern, '').trim();
             }
+
             for await (const event of stream) {
                 // Hoạn thiên data
                 if (event.event == "thread.message.delta") {
@@ -113,7 +123,7 @@ class AssistaintModule {
                         timeout = setTimeout(async () => {
                             await sendMessage({
                                 completed: false,
-                                full: str
+                                full: removePattern(str)
                             });
                             timeout = null
                         })
@@ -122,7 +132,7 @@ class AssistaintModule {
                 if (event.event == "thread.run.completed") {
                     await sendMessage({
                         completed: true,
-                        full: str
+                        full: removePattern(str)
                     });
                 }
                 // console.log(str)
