@@ -76,6 +76,10 @@ const checkLimit = async (objectData) => {
             return false;
         }
         // Nếu vẫn trong hạn và count chưa vượt quá ask
+
+        // kiểm tra tính năng
+       
+
         return true;
     } catch (error) {
         return false;

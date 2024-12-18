@@ -1,4 +1,4 @@
-const { 
+const {
     STATUS,
     astConversation,
     findConversation,
@@ -63,6 +63,7 @@ exports.createConversation = async (req, res) => {
         const { thread_id, message } = req.body
         const user_id = req.user.id
         // Cộng thêm request vào ngày 
+        let objectData = await getLicense(user_id)
         if (await checkLimit(await getLicense(user_id))) {
             addDayCount(user_id)
         } else {
@@ -73,6 +74,28 @@ exports.createConversation = async (req, res) => {
         let msg = await findConversation(req.user.id, `thread_${thread_id}`)
 
         let assistant = await findAssistant(msg.assistant_id)
+
+        //Kiểm tra tính năng
+        const findPackage = async (objectData, assistant_id) => {
+            try {
+                let features = JSON.parse(objectData.pack.features)
+                for (let index = 0; index < features.length; index++) {
+                    const element = features[index];
+                    if (element.type == "assistant" && element.id == assistant_id) {
+                        return true
+                    }
+                }
+                return false
+            } catch (error) {
+
+                return false
+            }
+        }
+        let enbleData = await findPackage(objectData,assistant.id)
+        if(!enbleData){
+            res.status(500).json({ success: false, message: 'Upgrade to use features' });
+            return
+        }
         if (!assistant) {
             res.status(500).json({ success: false, message: 'Not found assistant' });
             return
@@ -120,7 +143,7 @@ exports.createConversation = async (req, res) => {
                 })
                 await updateConversation(JSON.stringify(newMsg), msg.id)
 
-                
+
                 await res.write(`${JSON.stringify({
                     success: true,
                     data
@@ -257,45 +280,45 @@ const getLicense = async (user_id) => {
 exports.chatHistory = async (req, res) => {
     try {
         const { page = 1, limit = 10 } = req.query;
-        const offset = parseInt(page - 1) * parseInt(limit) 
+        const offset = parseInt(page - 1) * parseInt(limit)
         const { assistant_id } = req.body
         const user_id = req.user.id
         let count = await Conversation.count({
-            where:{
-                user_id:user_id,
-                assistant_id:assistant_id
+            where: {
+                user_id: user_id,
+                assistant_id: assistant_id
             },
         });
         let lst = await Conversation.findAll({
-            where:{
-                user_id:user_id,
-                assistant_id:assistant_id
+            where: {
+                user_id: user_id,
+                assistant_id: assistant_id
             },
-            attributes:["id","thread_id","messages"],
-            limit: parseInt(limit), 
-            offset: offset 
+            attributes: ["id", "thread_id", "messages"],
+            limit: parseInt(limit),
+            offset: offset
         })
         // console.log(lst)
         let dataLst = []
         for (let index = 0; index < lst.length; index++) {
             const element = lst[index];
             let data = JSON.parse(element.messages)
-            if(data !=  undefined){
-                if(data[0]){
+            if (data != undefined) {
+                if (data[0]) {
                     let text = data[0].content
                     dataLst.push({
-                        id:element.id,
-                        thread_idid:element.thread_id,
-                        name:text.length > 50 ? text.slice(0,50) : text = text
+                        id: element.id,
+                        thread_idid: element.thread_id,
+                        name: text.length > 50 ? text.slice(0, 50) : text = text
                     })
-                }else{
+                } else {
                     dataLst.push({
-                        id:element.id,
-                        thread_idid:element.thread_id,
-                        name:"No message"
+                        id: element.id,
+                        thread_idid: element.thread_id,
+                        name: "No message"
                     })
                 }
-                
+
             }
         }
         // Danh sách cuộc hội thoại này
@@ -303,9 +326,9 @@ exports.chatHistory = async (req, res) => {
             success: true,
             message: `Lịch sử trò chuyện`,
             data: dataLst,
-            total:count,
-            page:page,
-            limit:limit
+            total: count,
+            page: page,
+            limit: limit
         });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
