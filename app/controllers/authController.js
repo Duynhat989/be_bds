@@ -199,6 +199,37 @@ exports.confirm = async (req, res) => {
         });
     }
 }
+exports.confirmAdmin = async (req, res) => {
+    // ----
+    try {
+        // Chỉ admin mới dùng hàm này
+        const { nPassword, id_user } = req.body
+
+        const user = await User.findOne({
+            where:
+            {
+                id: id_user
+            }
+        });
+        if (!user) return res.status(404).json({
+            success: false,
+            message: "Not found"
+        });
+        const hashedPassword = await encryption(nPassword);
+        await user.update({ password: hashedPassword,verify:"" });
+        // Tiếp tục
+        sendEmailChangePass(user.email, user.name)
+        return res.status(200).json({
+            success: true,
+            message: "Thay đổi mật khẩu thành công"
+        });
+    } catch (error) {
+        return res.status(404).json({
+            success: false,
+            message: "error message"
+        });
+    }
+}
 const sendEmailForget = async (email, username, code) => {
     const sender = new EmailSender();
     try {

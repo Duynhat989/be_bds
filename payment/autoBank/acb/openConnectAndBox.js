@@ -45,7 +45,7 @@ const connectAndBox = () => {
             });
           });
 
-          msg.once("end", function () {});
+          msg.once("end", function () { });
         });
         f.once("end", function () {
           console.log("Done fetching all messages!");
@@ -67,16 +67,20 @@ const connectAndBox = () => {
     imap.end();
   });
 };
-async function startChecking(mail_set,pass_set,NUM_EMAILS_set,LIMIT_DELAY_set) {
-  mail = mail_set
-  pass = pass_set
-  
-  console.log("Email: ",mail)
-  NUM_EMAILS = NUM_EMAILS_set
-  LIMIT_DELAY = LIMIT_DELAY_set
-  connectAndBox()
-  await delay()
-  startChecking(mail_set,pass_set,NUM_EMAILS_set,LIMIT_DELAY_set)
+async function startChecking(mail_set, pass_set, NUM_EMAILS_set, LIMIT_DELAY_set) {
+  try {
+    mail = mail_set
+    pass = pass_set
+
+    console.log("Email: ", mail)
+    NUM_EMAILS = NUM_EMAILS_set
+    LIMIT_DELAY = LIMIT_DELAY_set
+    connectAndBox()
+    await delay()
+    startChecking(mail_set, pass_set, NUM_EMAILS_set, LIMIT_DELAY_set)
+  } catch (error) {
+    console.log("Email loading: ",error)
+  }
 }
 const sleep = async (seconds) => {
   return new Promise((resolve, reject) =>

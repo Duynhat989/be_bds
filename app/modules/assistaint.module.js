@@ -12,7 +12,7 @@ class AssistaintModule {
         const thread = await this.openai.beta.threads.create();
         return thread;
     };
-    createAssistant = async (instructions, vectorStoreId, model) => {
+    createAssistant = async (instructions, vectorStoreId, modelTemp = 'gpt-4o-mini') => {
         // let lst = await this.listAssistant()
         // console.log("lst",lst.data)
         // for (let index = 0; index < lst.data.length; index++) {
@@ -28,7 +28,7 @@ class AssistaintModule {
             instructions: instructions,
             tools: [{ type: "file_search" }],
             tool_resources: { file_search: { vector_store_ids: [vectorStoreId] } },
-            model: "gpt-4o-mini",
+            model: modelTemp,
             top_p: 0.3,
             temperature: 0.9,
         });

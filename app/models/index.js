@@ -19,6 +19,9 @@ const { Prompt } = require('../models/promptModel');
 
 
 
+User.hasMany(License, { foreignKey: 'user_id', as: 'Licenses' });
+License.belongsTo(User, { foreignKey: 'user_id', as: 'User' });
+
 
 sequelize.sync({ force: false }).then(() => {
   console.log('Database đã được đồng bộ!');

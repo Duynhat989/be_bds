@@ -26,7 +26,7 @@ exports.getAllAssistant = async (req, res) => {
         });
         const data = await Assistant.findAll({
             where: wge,
-            attributes: ['id', 'name', 'detail', 'image', 'suggests', 'view'],
+            attributes: ['id', 'name', 'detail', 'image', 'suggests','name_model', 'view'],
             limit: parseInt(limit),
             offset: offset
         });
@@ -44,7 +44,7 @@ exports.getAllAssistant = async (req, res) => {
 };
 exports.createAssistant = async (req, res) => {
     try {
-        const { name, detail, image, instructions, file_ids, suggests, name_model } = req.body
+        const { name, detail, image, instructions, file_ids, suggests, name_model = "gpt-4o-mini" } = req.body
         // Tạo trợ lý 
         // console.log('sđá')
         let OPENAI_API_KEY = await loadApiKey()
@@ -70,7 +70,7 @@ exports.createAssistant = async (req, res) => {
             return
         }
         // vector đã tạo
-        let assistant = await module.createAssistant(instructions, vector_id)
+        let assistant = await module.createAssistant(instructions, vector_id, name_model)
         console.log(file_ids)
         // Mình cần lưu vào
         var resRow = await astCreateRow(
@@ -94,7 +94,7 @@ exports.createAssistant = async (req, res) => {
 exports.updateAssistant = async (req, res) => {
     try {
 
-        const { name, detail, image, instructions, file_ids, suggests, name_model, id } = req.body
+        const { name, detail, image, instructions, file_ids, suggests, name_model = 'gpt-4o-mini', id } = req.body
         // Lấy api key
         let OPENAI_API_KEY = await loadApiKey()
         if (OPENAI_API_KEY.length < 10) {
@@ -137,7 +137,7 @@ exports.updateAssistant = async (req, res) => {
             // Tạo mới vector và assistant
             let vector_id = await module.createVector(file_ids)
             // vector đã tạo
-            let assistant = await module.createAssistant(instructions, vector_id)
+            let assistant = await module.createAssistant(instructions, vector_id,name_model)
             // Trợ lý mới đã được tạo 
             var resRow = await astUpdateRow(
                 name, detail, image,
@@ -159,7 +159,7 @@ exports.updateAssistant = async (req, res) => {
                 data: resRow
             });
         } else {
-            if (instructions != assistant_old.instructions) {
+            if (instructions != assistant_old.instructions || name_model != assistant_old.name_model) {
                 // xóa trợ lý cũ
                 try {
                     const asset = await module.deleteAssistant(assistant_old.assistant_id)
@@ -167,7 +167,7 @@ exports.updateAssistant = async (req, res) => {
                 } catch (error) {
                     console.log(error)
                 }
-                let assistant = await module.createAssistant(instructions, assistant_old.vector_id)
+                let assistant = await module.createAssistant(instructions, assistant_old.vector_id,name_model)
                 // Trợ lý mới đã được tạo 
                 var resRow = await astUpdateRow(
                     name, detail, image,

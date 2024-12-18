@@ -14,4 +14,8 @@ router.post("/forget",   validate(['email']),authController.forget);
 
 // Quên tài khoản
 router.post("/confirm",   validate(['code']),authController.confirm); 
+
+
+// Đổi mật khẩu bởi admin
+router.post("/change", auth([1]),validate(['id_user']), authController.confirmAdmin);
 module.exports = router;
