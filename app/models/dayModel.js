@@ -64,6 +64,7 @@ const checkLimit = async (objectData) => {
     // console.log(objectData);
     try {
         // Lấy ngày hiện tại
+        console.log("objectData: ",objectData)
         const currentDate = new Date(objectData.date);
         const today = new Date();
         // Kiểm tra nếu ngày trong object đã hết hạn

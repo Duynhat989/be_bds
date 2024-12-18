@@ -18,4 +18,9 @@ router.post("/confirm",   validate(['code']),authController.confirm);
 
 // Đổi mật khẩu bởi admin
 router.post("/change", auth([1]),validate(['id_user']), authController.confirmAdmin);
+
+
+
+// Đổi mật khẩu bởi admin
+router.post("/change-user", auth([1,3]),validate(['id_user']), authController.changePass);
 module.exports = router;

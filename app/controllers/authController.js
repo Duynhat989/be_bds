@@ -230,6 +230,52 @@ exports.confirmAdmin = async (req, res) => {
         });
     }
 }
+exports.changePass = async (req, res) => {
+    try {
+        const { oldPassword, nPassword, id_user } = req.body;
+
+        // Tìm người dùng theo ID
+        const user = await User.findOne({
+            where: { id: id_user }
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "Người dùng không tồn tại"
+            });
+        }
+
+        // So sánh mật khẩu cũ
+        const isMatch = await compare(oldPassword, user.password);
+        if (!isMatch) {
+            return res.status(400).json({
+                success: false,
+                message: "Mật khẩu cũ không chính xác"
+            });
+        }
+
+        // Mã hóa mật khẩu mới
+        const hashedPassword = await encryption(nPassword);
+
+        // Cập nhật mật khẩu mới và xóa thông tin xác minh nếu có
+        await user.update({ password: hashedPassword, verify: "" });
+
+        // Gửi email thông báo thay đổi mật khẩu
+        sendEmailChangePass(user.email, user.name);
+
+        return res.status(200).json({
+            success: true,
+            message: "Thay đổi mật khẩu thành công"
+        });
+    } catch (error) {
+        console.error("Lỗi khi đổi mật khẩu:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Đã xảy ra lỗi trong quá trình xử lý"
+        });
+    }
+};
 const sendEmailForget = async (email, username, code) => {
     const sender = new EmailSender();
     try {
