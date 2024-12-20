@@ -34,7 +34,8 @@ const loadApiKey = async () => {
   let data = await Setup.findAll({
     where:{
       name:'API_KEY'
-    }
+    },
+    order: [["createdAt", "DESC"]],
   })
   if(data && data.length > 0){
     return data[0].value
@@ -46,7 +47,8 @@ const loadModel = async () => {
   let data = await Setup.findAll({
     where:{
       name:'API_MODEL'
-    }
+    },
+    order: [["createdAt", "DESC"]],
   })
   if(data && data.length > 0){
     return data[0].value

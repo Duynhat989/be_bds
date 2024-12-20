@@ -13,6 +13,7 @@ exports.getLicenses = async (req, res) => {
             where: {
                 status: STATUS.ON
             },
+            order: [["createdAt", "DESC"]],
             limit: parseInt(limit),
             offset: offset
         });

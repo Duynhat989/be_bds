@@ -29,6 +29,18 @@ exports.pays = async (req, res) => {
         let count = await Pay.count({
             where: condition
         });
+        let pack_2 = await Pay.count({
+            where: {
+                ...condition,
+                package_id:2
+            }
+        });
+        let pack_3 = await Pay.count({
+            where: {
+                ...condition,
+                package_id:2
+            }
+        });
         let pays = await Pay.findAll({
             where: condition,
             attributes: ["id"
@@ -63,6 +75,8 @@ exports.pays = async (req, res) => {
             success: true,
             pays: paysInfo,
             totalMustPay: totalMustPay,
+            pack_2:pack_2,
+            pack_3:pack_3,
             total: count,
             page: page,
             limit: limit
@@ -108,6 +122,7 @@ exports.findById = async (req, res) => {
                 , "invoice_code"
                 , "status_pay"
                 , "status"],
+            order: [["createdAt", "DESC"]],
             limit: parseInt(limit),
             offset: offset
         });
@@ -195,6 +210,7 @@ exports.users = async (req, res) => {
         const users = await User.findAll({
             where: condition,
             attributes: ['id', 'name', 'email'],
+            order: [["createdAt", "DESC"]],
             limit: 10
         });
         res.status(200).json({
@@ -329,6 +345,7 @@ exports.checkInvoiceStatus = async (req, res) => {
                     [Op.lt]: twoDaysAgo, // updatedAt < twoDaysAgo
                 },
             },
+            order: [["createdAt", "DESC"]],
         });
 
         // Cập nhật trạng thái của các hóa đơn quá hạn sang CANCELED

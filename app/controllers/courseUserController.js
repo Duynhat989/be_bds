@@ -9,7 +9,8 @@ exports.courses = async (req, res) => {
         let courses = await courseUser.findAll({
             where: {
                 status: 1
-            }
+            },
+            order: [["createdAt", "DESC"]],
         })
         res.status(200).json({
             success: true,
@@ -28,7 +29,8 @@ exports.mySevices = async (req, res) => {
             where: {
                 user_id: user_id
             },
-            attributes: ["id","course_id", "watched", "status"]
+            attributes: ["id","course_id", "watched", "status"],
+            order: [["createdAt", "DESC"]],
         })
         let lstSevices = []
         for (let index = 0; index < lst.length; index++) {
@@ -40,7 +42,8 @@ exports.mySevices = async (req, res) => {
                     where: {
                         course_id: course.id
                     },
-                    attributes: ["id", "name", "detail", "image", "indexRow", "url_video"]
+                    attributes: ["id", "name", "detail", "image", "indexRow", "url_video"],
+                    order: [["createdAt", "DESC"]],
                 })
                 if(lesions){
                     lstSevices.push({

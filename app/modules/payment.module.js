@@ -98,6 +98,7 @@ class Payment {
                         [Op.lt]: twoDaysAgo, // updatedAt < twoDaysAgo
                     },
                 },
+                order: [["createdAt", "DESC"]],
             });
             // Cập nhật trạng thái của các hóa đơn quá hạn sang CANCELED
             if (expiredInvoices.length > 0) {

@@ -51,6 +51,7 @@ exports.contracts = async (req, res) => {
         let contracts = await Contract.findAll({
             where: wge,
             attributes: ["id", "name", "description", "image", "input", "status"],
+            order: [["createdAt", "DESC"]],
             limit: parseInt(limit),
             offset: offset
         });
@@ -167,7 +168,8 @@ exports.findByName = async (req, res) => {
                     [Op.like]: `%${name}%`
                 }
             },
-            attributes: ["id", "name", "description", "image", "input", "status"]
+            attributes: ["id", "name", "description", "image", "input", "status"],
+            order: [["createdAt", "DESC"]],
         });
 
         res.status(200).json({

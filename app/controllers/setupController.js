@@ -5,7 +5,8 @@ const { encryption, compare } = require('../utils/encode');
 exports.getAllSetup = async (req, res) => {
     try {
         const setups = await Setup.findAll({ 
-            where: { status: STATUS.ON }
+            where: { status: STATUS.ON },
+            order: [["createdAt", "DESC"]],
         });
         res.status(200).json({
             success: true,

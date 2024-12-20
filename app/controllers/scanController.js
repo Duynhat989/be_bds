@@ -37,6 +37,7 @@ exports.contracts = async (req, res) => {
             where: {
                 status: 1
             },
+            order: [["createdAt", "DESC"]],
             limit: parseInt(limit),
             offset: offset
         });
@@ -140,7 +141,8 @@ exports.findByName = async (req, res) => {
                 name: {
                     [Op.like]: `%${name}%`
                 }
-            }
+            },
+            order: [["createdAt", "DESC"]],
         });
 
         res.status(200).json({

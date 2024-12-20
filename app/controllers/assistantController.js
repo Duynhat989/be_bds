@@ -27,6 +27,7 @@ exports.getAllAssistant = async (req, res) => {
         const data = await Assistant.findAll({
             where: wge,
             attributes: ['id', 'name', 'detail', 'image', 'suggests','name_model', 'view'],
+            order: [["createdAt", "DESC"]],
             limit: parseInt(limit),
             offset: offset
         });
@@ -295,7 +296,8 @@ exports.suggest = async (req, res) => {
                 name: {
                     [Op.like]: `%${search}%`
                 }
-            }
+            },
+            order: [["createdAt", "DESC"]],
         });
         if (locations) {
             return res.json(

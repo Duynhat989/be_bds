@@ -63,6 +63,7 @@ exports.getAllRealEstates = async (req, res) => {
 
         let realEstates = await RealEstate.findAll({
             where: wge,
+            order: [["createdAt", "DESC"]],
             limit: parseInt(limit),
             offset: offset
         });
@@ -219,6 +220,7 @@ exports.nameEsal = async (req, res) => {
                     [Op.like]: `%${name}%`
                 }
             },
+            order: [["createdAt", "DESC"]],
             limit:500
         });
         if (locations) {

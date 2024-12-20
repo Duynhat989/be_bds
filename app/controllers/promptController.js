@@ -29,6 +29,7 @@ exports.getPrompts = async (req, res) => {
                 user_id:user_id
             },
             attributes:["id","name","prompt_text","status"],
+            order: [["createdAt", "DESC"]],
             limit: parseInt(limit),
             offset: offset
         });

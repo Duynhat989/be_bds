@@ -7,7 +7,8 @@ exports.lessons = async (req, res) => {
         let lessons = await Lesson.findAll({
             where:{
                 status:1
-            }
+            },
+            order: [["createdAt", "DESC"]],
         })
         res.status(200).json({
             success: true,

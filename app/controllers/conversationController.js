@@ -21,6 +21,7 @@ exports.createThread = async (req, res) => {
         const { assistant_id } = req.body
         // Lấy thông tin trợ lý
         let assistant = await findAssistant(assistant_id)
+        // Cập nhật thông tinviewr
         if (!assistant) {
             res.status(500).json({ success: false, message: 'Not found assistant' });
             return
@@ -37,6 +38,13 @@ exports.createThread = async (req, res) => {
         const module = new AssistaintModule(OPENAI_API_KEY)
         let thread = await module.start()
         // Tìm kiếm assistant
+        //Cập nhật view trợ lý
+        try {
+            assistant.view = assistant.view + 1;
+            await assistant.save();
+        } catch (error) {
+            
+        }
         // console.log(assistant)
         const conversations = await astConversation(
             "Tư vấn",
@@ -295,6 +303,7 @@ exports.chatHistory = async (req, res) => {
                 assistant_id: assistant_id
             },
             attributes: ["id", "thread_id", "messages"],
+            order: [["createdAt", "DESC"]],
             limit: parseInt(limit),
             offset: offset
         })

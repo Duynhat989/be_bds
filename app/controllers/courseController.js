@@ -21,6 +21,7 @@ exports.courses = async (req, res) => {
         });
         let courses = await Course.findAll({
             where: wge,
+            order: [["createdAt", "DESC"]],
             limit: parseInt(limit),
             offset: offset
         })
@@ -63,7 +64,8 @@ exports.find = async (req, res) => {
                     where: {
                         course_id: course.id
                     },
-                    attributes: ["id", "name", "detail", "image", "indexRow", "url_video"]
+                    attributes: ["id", "name", "detail", "image", "indexRow", "url_video"],
+                    order: [["createdAt", "DESC"]],
                 })
             }
             res.status(200).json({
@@ -85,7 +87,8 @@ exports.find = async (req, res) => {
                     where: {
                         course_id: course.id
                     },
-                    attributes: ["id", "name", "detail", "image", "indexRow", "url_video"]
+                    attributes: ["id", "name", "detail", "image", "indexRow", "url_video"],
+                    order: [["createdAt", "DESC"]],
                 })
             }
             res.status(200).json({

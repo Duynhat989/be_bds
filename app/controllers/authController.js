@@ -49,7 +49,15 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
     const { email, password } = req.body;
     try {
-        const user = await User.findOne({ where: { email } });
+        const user = await User.findOne({
+            where:
+            {
+                [Op.or]: [
+                    { name:email.trim() },
+                    { email:email.trim() }
+                ]
+            }
+        });
         if (!user) return res.status(400).json({
             success: false,
             message: "Login failed",
@@ -185,7 +193,7 @@ exports.confirm = async (req, res) => {
             message: "wrong code"
         });
         const hashedPassword = await encryption(new_password);
-        await user.update({ password: hashedPassword,verify:"" });
+        await user.update({ password: hashedPassword, verify: "" });
         // Tiếp tục
         sendEmailChangePass(user.email, user.name)
         return res.status(200).json({
@@ -216,7 +224,7 @@ exports.confirmAdmin = async (req, res) => {
             message: "Not found"
         });
         const hashedPassword = await encryption(nPassword);
-        await user.update({ password: hashedPassword,verify:"" });
+        await user.update({ password: hashedPassword, verify: "" });
         // Tiếp tục
         sendEmailChangePass(user.email, user.name)
         return res.status(200).json({
