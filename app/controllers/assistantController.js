@@ -26,7 +26,7 @@ exports.getAllAssistant = async (req, res) => {
         });
         const data = await Assistant.findAll({
             where: wge,
-            attributes: ['id', 'name', 'detail', 'image', 'suggests','name_model', 'view'],
+            attributes: ['id', 'name', 'detail', 'image', 'suggests', 'name_model', 'view'],
             // order: [["createdAt", "DESC"]],
             limit: parseInt(limit),
             offset: offset
@@ -120,7 +120,11 @@ exports.updateAssistant = async (req, res) => {
             for (let index = 0; index < old_file_ids.length; index++) {
                 const element = old_file_ids[index];
                 if (!file_ids.includes(element)) {
-                    await module.delFile(element)
+                    try {
+                        await module.delFile(element)
+                    } catch (error) {
+
+                    }
                 }
             }
             // Xóa vector cũ
@@ -135,30 +139,34 @@ exports.updateAssistant = async (req, res) => {
             } catch (error) {
                 console.log('Xóa vector lỗi')
             }
-            // Tạo mới vector và assistant
-            let vector_id = await module.createVector(file_ids)
-            // vector đã tạo
-            let assistant = await module.createAssistant(instructions, vector_id,name_model)
-            // Trợ lý mới đã được tạo 
-            var resRow = await astUpdateRow(
-                name, detail, image,
-                instructions,
-                vector_id,
-                JSON.stringify(file_ids),
-                assistant.id,
-                JSON.stringify(assistant),
-                JSON.stringify(suggests),
-                name_model,
-                assistant_old.id
-            )
-            // Xóa trợ lý cũ
+            try {
+                // Tạo mới vector và assistant
+                let vector_id = await module.createVector(file_ids)
+                // vector đã tạo
+                let assistant = await module.createAssistant(instructions, vector_id, name_model)
+                // Trợ lý mới đã được tạo 
+                var resRow = await astUpdateRow(
+                    name, detail, image,
+                    instructions,
+                    vector_id,
+                    JSON.stringify(file_ids),
+                    assistant.id,
+                    JSON.stringify(assistant),
+                    JSON.stringify(suggests),
+                    name_model,
+                    assistant_old.id
+                )
+                // Xóa trợ lý cũ
 
-            // Danh sách trợ lý
-            res.status(200).json({
-                success: true,
-                message: `Update success new assistant`,
-                data: resRow
-            });
+                // Danh sách trợ lý
+                res.status(200).json({
+                    success: true,
+                    message: `Update success new assistant`,
+                    data: resRow
+                });
+            } catch (error) {
+                res.status(500).json({ success: false, message: `Lỗi tạo trợ lý` });
+            }
         } else {
             if (instructions != assistant_old.instructions || name_model != assistant_old.name_model) {
                 // xóa trợ lý cũ
@@ -168,7 +176,16 @@ exports.updateAssistant = async (req, res) => {
                 } catch (error) {
                     console.log(error)
                 }
-                let assistant = await module.createAssistant(instructions, assistant_old.vector_id,name_model)
+                try {
+                    await module.delVector(assistant_old.vector_id)
+                } catch (error) {
+                    console.log('Xóa vector lỗi')
+                }
+                // Tạo mới vector và assistant
+                let vector_id = await module.createVector(assistant_old.file_ids)
+                console.log(vector_id)
+                let assistant = await module.createAssistant(instructions, vector_id, name_model)
+                console.log(assistant)
                 // Trợ lý mới đã được tạo 
                 var resRow = await astUpdateRow(
                     name, detail, image,

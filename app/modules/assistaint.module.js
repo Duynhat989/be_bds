@@ -44,7 +44,7 @@ class AssistaintModule {
             });
             return vectorStore.id;
         } catch (error) {
-            return name
+            return `error_${name}`
         }
     }
     delVectorName = async (nameVector) => {
@@ -139,6 +139,7 @@ class AssistaintModule {
             }
             return true;
         } catch (error) {
+            console.log(error)
             await sendMessage({
                 completed: true,
                 full: "Đã xảy ra lỗi!"
