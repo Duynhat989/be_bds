@@ -9,14 +9,14 @@ router.get("/pays", auth([1, 3]), payController.pays);
 // Tìm theo ID
 router.post("/pay/find", auth([1]), payController.findById);
 // // Tìm theo tên
-router.post("/pay/findId", auth([1]),validate(['id']), payController.findByIdUpdate);
+router.post("/pay/findId", auth([1]), validate(['id']), payController.findByIdUpdate);
 
 // // Tạo trợ lý
-router.post("/pay/create", auth([1,3]), payController.createPay);
+router.post("/pay/create", auth([1, 3]), payController.createPay);
 // // Cập nhật trợ lý
 router.get("/pay/users", auth([1]), payController.users);
 // // Xóa khóa học
-router.delete("/pay/delete", auth([1]),validate(['id']), payController.deletePay);
+router.delete("/pay/delete", auth([1]), validate(['id']), payController.deletePay);
 // Tìm khóa học 
 
 // cập nhật hóa đơn 
@@ -31,6 +31,8 @@ router.post("/pay/update", auth([1]), payController.EditInvoice);
 router.post("/pay/confirmInvoice", auth([1]), payController.updateInvoice);
 
 router.post("/pay/checkInvoice", auth([1]), payController.checkInvoiceStatus);
+// kiểm tra hóa đơn
+router.post("/pay/verifyInvoice", auth([1,3]), payController.verifyInvoice);
 
 
 module.exports = router;

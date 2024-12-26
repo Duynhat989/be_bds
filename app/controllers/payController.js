@@ -391,6 +391,40 @@ exports.checkInvoiceStatus = async (req, res) => {
         });
     }
 };
+exports.verifyInvoice = async (req, res) => {
+    const { invoice_code } = req.body;
+
+    try {
+        // Kiểm tra hóa đơn với invoice_code
+        const pay = await Pay.findOne({
+            where: {
+                invoice_code: invoice_code,
+            },
+            attributes: ['id', 'status_pay', 'invoice_code'], // Chỉ lấy thông tin cần thiết
+        });
+
+        if (!pay) {
+            return res.status(404).json({
+                success: false,
+                message: "Invoice not found.",
+            });
+        }
+        // Kiểm tra trạng thái thanh toán
+        const isPaid = pay.status_pay === PAY_STATUS.PAID;
+        return res.status(200).json({
+            success: true,
+            invoice_code: pay.invoice_code,
+            status: pay.status_pay,//1 hold 2 paid 3 cancel
+            isPaid: isPaid,
+            message: isPaid ? "Invoice has been paid." : "Invoice is not yet paid.",
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
 
 exports.EditInvoice = async (req, res) => {
     const { invoice_code, status_pay, must_pay, package_id, extension_period, message_code, user_id } = req.body;
