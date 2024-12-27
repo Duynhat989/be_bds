@@ -35,6 +35,10 @@ class AssistaintModule {
         return assistant
     };
     createVector = async (file_ids) => {
+        console.log(file_ids)
+        if (typeof file_ids === 'string') {
+            file_ids = JSON.parse(file_ids);
+        }
         let handle = await this.generateRandomMD5()
         const name = `vector_${handle}`
         try {
@@ -44,6 +48,7 @@ class AssistaintModule {
             });
             return vectorStore.id;
         } catch (error) {
+            console.log(error)
             return `error_${name}`
         }
     }
