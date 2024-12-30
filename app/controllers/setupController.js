@@ -19,7 +19,15 @@ exports.getAllSetup = async (req, res) => {
 };
 exports.saveAllSetup = async (req, res) => {
     try {
-        const { API_KEY,API_STATUS,API_ESTATE,API_FINANCEAL,API_SUMMARY,API_TEAMTRAINING,API_REP_CONTRACT, API_INVESTADVISE } = req.body
+        const { API_KEY,
+            API_STATUS,
+            API_ESTATE,
+            API_FINANCEAL,
+            API_SUMMARY,
+            API_TEAMTRAINING,
+            API_REP_CONTRACT,
+            API_INVESTADVISE,
+            API_FREE_UP } = req.body
         if(API_KEY){
             const item = await Setup.findOne({
                 where:{
@@ -105,6 +113,17 @@ exports.saveAllSetup = async (req, res) => {
             })
             if(item){
                 item.value = API_INVESTADVISE
+                await item.save();
+            }
+        }
+        if(API_FREE_UP){
+            const item = await Setup.findOne({
+                where:{
+                    name:'API_FREE_UP'
+                }
+            })
+            if(item){
+                item.value = API_FREE_UP
                 await item.save();
             }
         }

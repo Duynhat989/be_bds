@@ -1,4 +1,4 @@
-const { License, STATUS, Package, Day } = require("../models");
+const { License, STATUS, Package, Day , Setup} = require("../models");
 
 exports.getLicenses = async (req, res) => {
     try {
@@ -37,8 +37,21 @@ exports.getLicenseById = async (req, res) => {
             }
         });
         if (!licenses) {
+            const item = await Setup.findOne({
+                where:{
+                    name:'API_FREE_UP'
+                }
+            })
+            let dayTime = 5
+            try {
+                if(item){
+                    dayTime = parseInt(item.value)
+                }
+            } catch (error) {
+                dayTime = 5
+            }
             let currentDate = new Date();
-            let expirationDate = new Date(currentDate.getTime() + 5 * 24 * 60 * 60 * 1000);
+            let expirationDate = new Date(currentDate.getTime() + dayTime * 24 * 60 * 60 * 1000);
             // Chuyển expirationDate thành dạng DATEONLY (YYYY-MM-DD)
             expirationDate = expirationDate.toISOString().split('T')[0];
             licenses = await License.create({
@@ -110,8 +123,21 @@ exports.getLicense = async (req, res) => {
             }
         });
         if (licenses == null) {
+            const item = await Setup.findOne({
+                where:{
+                    name:'API_FREE_UP'
+                }
+            })
+            let dayTime = 5
+            try {
+                if(item){
+                    dayTime = parseInt(item.value)
+                }
+            } catch (error) {
+                dayTime = 5
+            }
             let currentDate = new Date();
-            let expirationDate = new Date(currentDate.getTime() + 5 * 24 * 60 * 60 * 1000);
+            let expirationDate = new Date(currentDate.getTime() + dayTime * 24 * 60 * 60 * 1000);
             // Chuyển expirationDate thành dạng DATEONLY (YYYY-MM-DD)
             expirationDate = expirationDate.toISOString().split('T')[0];
             licenses = await License.create({
