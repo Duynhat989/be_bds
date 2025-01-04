@@ -3,6 +3,7 @@ const path = require('path');
 const { STATUS, Contract } = require("../models");
 const { encryption, compare } = require('../utils/encode');
 const { Sequelize, Op } = require('sequelize');
+const WordExtractor = require("word-extractor");
 
 const multer = require('multer');
 const { WordProcessor } = require('../modules/WordProcessor.module');
@@ -298,7 +299,13 @@ exports.appProcess = async (req, res) => {
                 const fileType = req.file.mimetype; // Kiểm tra loại file
                 let fileContent;
 
-                if (fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                if (fileType === "application/msword") {
+                    // Đọc file Word (.doc)
+                    const extractor = new WordExtractor();
+                    const extracted = extractor.extract(pathDoc);
+                    fileContent = (await extracted).getBody(); // Lấy nội dung văn bản từ file .doc
+                }
+                else if (fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
                     // Đọc file Word (.docx) với đường dẫn file
                     const result = await mammoth.extractRawText({ path: pathDoc });
                     fileContent = result.value;
