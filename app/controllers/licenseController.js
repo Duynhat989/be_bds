@@ -158,6 +158,7 @@ exports.getLicense = async (req, res) => {
             ...result,
             ...{
                 pack: {
+                    id: pack.dataValues.id,
                     name: pack.dataValues.name,
                     price: pack.dataValues.price,
                     ask: pack.dataValues.ask,
