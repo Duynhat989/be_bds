@@ -125,3 +125,129 @@ exports.getRevenueStats = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+// hàm mới 
+exports.getUserRegistrationStatsDay = async (req, res) => {
+    try {
+        const { days } = req.query; // Nhận tham số từ query (ví dụ: 3day, 7day, 30day, 60day)
+        const today = new Date();
+        const startOfToday = new Date(today.setHours(0, 0, 0, 0));
+
+        const calculateDailyStats = async (days) => {
+            const dailyStats = [];
+            for (let i = 0; i < days; i++) {
+                const startOfDay = new Date(startOfToday);
+                startOfDay.setDate(startOfDay.getDate() - i);
+                const endOfDay = new Date(startOfDay);
+                endOfDay.setHours(23, 59, 59, 999);
+
+                const usersThisDay = await User.count({
+                    where: {
+                        createdAt: {
+                            [Op.between]: [startOfDay, endOfDay],
+                        },
+                    },
+                });
+
+                dailyStats.push({
+                    date: `${startOfDay.getFullYear()}-${startOfDay.getMonth() + 1}-${startOfDay.getDate()}`,
+                    users: usersThisDay,
+                });
+            }
+            return dailyStats;
+        };
+
+        // Dựa trên tham số truyền lên, gọi hàm tính toán thống kê cho các ngày tương ứng
+        let daysCount = 0;
+        switch (days) {
+            case '3day':
+                daysCount = 3;
+                break;
+            case '7day':
+                daysCount = 7;
+                break;
+            case '30day':
+                daysCount = 30;
+                break;
+            case '60day':
+                daysCount = 60;
+                break;
+            default:
+                return res.status(400).json({ success: false, message: 'Invalid days parameter' });
+        }
+
+        const stats = await calculateDailyStats(daysCount);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                stats,
+            },
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// day
+exports.getRevenueStatsDay = async (req, res) => {
+    try {
+        const { days } = req.query; // Nhận tham số từ query (ví dụ: 3day, 7day, 30day, 60day)
+        const today = new Date();
+        const startOfToday = new Date(today.setHours(0, 0, 0, 0));
+
+        const calculateDailyRevenue = async (days) => {
+            const dailyRevenueStats = [];
+            for (let i = 0; i < days; i++) {
+                const startOfDay = new Date(startOfToday);
+                startOfDay.setDate(startOfDay.getDate() - i);
+                const endOfDay = new Date(startOfDay);
+                endOfDay.setHours(23, 59, 59, 999);
+
+                const revenueThisDay = await Pay.sum("must_pay", {
+                    where: {
+                        status_pay: 2, // Đã thanh toán
+                        createdAt: {
+                            [Op.between]: [startOfDay, endOfDay],
+                        },
+                    },
+                });
+
+                dailyRevenueStats.push({
+                    date: `${startOfDay.getFullYear()}-${startOfDay.getMonth() + 1}-${startOfDay.getDate()}`,
+                    revenue: revenueThisDay || 0,
+                });
+            }
+            return dailyRevenueStats;
+        };
+
+        // Dựa trên tham số truyền lên, gọi hàm tính toán doanh thu cho các ngày tương ứng
+        let daysCount = 0;
+        switch (days) {
+            case '3day':
+                daysCount = 3;
+                break;
+            case '7day':
+                daysCount = 7;
+                break;
+            case '30day':
+                daysCount = 30;
+                break;
+            case '60day':
+                daysCount = 60;
+                break;
+            default:
+                return res.status(400).json({ success: false, message: 'Invalid days parameter' });
+        }
+
+        const revenueStats = await calculateDailyRevenue(daysCount);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                revenueStats,
+            },
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};

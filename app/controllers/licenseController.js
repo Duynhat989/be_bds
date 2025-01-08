@@ -1,4 +1,4 @@
-const { License, STATUS, Package, Day , Setup} = require("../models");
+const { License, STATUS, Package, Day , Setup, User} = require("../models");
 
 exports.getLicenses = async (req, res) => {
     try {
@@ -117,6 +117,12 @@ exports.getLicenseById = async (req, res) => {
 exports.getLicense = async (req, res) => {
     try {
         const user_id = req.user.id
+        let users = await User.findByPk(user_id)
+        console.log(users)
+        if(!users){
+            res.status(500).json({ success: false, message: "Tài khoản không tồn tại" });
+            return
+        }
         let licenses = await License.findOne({
             where: {
                 user_id: user_id
