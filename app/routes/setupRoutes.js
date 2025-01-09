@@ -12,6 +12,8 @@ router.post("/setup/save", auth([1]),setupController.saveAllSetup);
 
 router.get("/setup/status", setupController.getStatus);
 
+
+router.get("/setup/payment", setupController.getPayment);
 // api get setup 
 
 

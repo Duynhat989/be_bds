@@ -27,7 +27,9 @@ exports.saveAllSetup = async (req, res) => {
             API_TEAMTRAINING,
             API_REP_CONTRACT,
             API_INVESTADVISE,
-            API_FREE_UP } = req.body
+            API_FREE_UP,
+            API_PAYMENT_MONTHS
+         } = req.body
         if(API_KEY){
             const item = await Setup.findOne({
                 where:{
@@ -127,6 +129,17 @@ exports.saveAllSetup = async (req, res) => {
                 await item.save();
             }
         }
+        if(API_PAYMENT_MONTHS){
+            const item = await Setup.findOne({
+                where:{
+                    name:'API_PAYMENT_MONTHS'
+                }
+            })
+            if(item){
+                item.value = API_PAYMENT_MONTHS
+                await item.save();
+            }
+        }
         res.status(200).json({
             success: true,
             message: `Save successs`
@@ -145,6 +158,21 @@ exports.getStatus = async (req, res) => {
         });
         res.status(200).json({
             maintenance: parseInt(setups.value) != 0 ? true : false
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+exports.getPayment = async (req, res) => {
+    try {
+        const setups = await Setup.findOne({ 
+            where: { 
+                status: STATUS.ON, 
+                name:'API_PAYMENT_MONTHS'
+            }
+        });
+        res.status(200).json({
+            payment:setups
         });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
