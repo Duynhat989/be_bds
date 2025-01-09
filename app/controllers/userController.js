@@ -96,7 +96,7 @@ exports.users = async (req, res) => {
 
             const users = await User.findAll({
                 where: wge,
-                attributes: ['id', 'name', 'phone', 'email', 'role'],
+                attributes: ['id', 'name', 'phone', 'email', 'role', 'createdAt'],
                 order: [["createdAt", "DESC"]],
                 limit: parseInt(limit),
                 offset: offset
