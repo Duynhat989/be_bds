@@ -122,7 +122,7 @@ exports.me = async (req, res) => {
             where: {
                 id: user_id
             },
-            attributes: ['id', 'name', 'phone', 'email', 'role'],
+            attributes: ['id', 'name', 'phone', 'email', 'role', 'createdAt'],
             order: [["createdAt", "DESC"]],
         });
         res.status(200).json({
