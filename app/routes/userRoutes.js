@@ -22,4 +22,6 @@ router.post("/user/update", auth([1]),validate(['id']), userController.update);
 router.delete("/user/delete", auth([1]),validate(['id']), userController.delete);
 
 
+
+
 module.exports = router;

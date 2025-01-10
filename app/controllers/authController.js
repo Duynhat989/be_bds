@@ -284,6 +284,29 @@ exports.changePass = async (req, res) => {
         });
     }
 };
+exports.contains = async (req, res) => {
+    try {
+        const { phone } = req.query;
+        const users = await User.findAll({
+            where: {
+                phone: phone
+            }
+        });
+        if(users.length > 0){
+            res.status(200).json({
+                success: false
+            });
+        }else{
+            res.status(200).json({
+                success: true
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+
 const sendEmailForget = async (email, username, code) => {
     const sender = new EmailSender();
     try {

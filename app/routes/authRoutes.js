@@ -14,6 +14,8 @@ router.post("/forget",   validate(['email']),authController.forget);
 
 // Quên tài khoản
 router.post("/confirm",   validate(['code']),authController.confirm); 
+// Kiểm tra phone
+router.get("/contains", authController.contains);
 
 
 // Đổi mật khẩu bởi admin
