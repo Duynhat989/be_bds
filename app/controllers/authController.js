@@ -55,7 +55,7 @@ exports.login = async (req, res) => {
                 [Op.or]: [
                     { name:email.trim() },
                     { email:email.trim() },
-                    { phone:phone.trim() }
+                    { phone:email.trim() }
                 ]
             }
         });
